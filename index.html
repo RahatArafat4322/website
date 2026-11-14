@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nextcircuit Official Creator Hub - Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
+  <meta name="theme-color" content="#05080e" />
+  <title>Nextcircuit | Official Creator Hub</title>
+  
+  <script src="https://cdn.tailwindcss.com" defer></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <div id="toastBanner" role="alert" aria-live="assertive" class="fixed bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 w-[90%] sm:w-auto z-50 hidden bg-[#0d1421] border border-[rgba(0,240,255,0.45)] text-slate-100 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium backdrop-blur-md text-center sm:text-left transition-opacity duration-300"></div>
+
+  <nav class="sidebar" aria-label="Main Navigation">
+    <header class="profile-box">
+      <div class="avatar-wrapper">
+        <div class="avatar" id="avatarContainer" aria-hidden="true"></div>
+      </div>
+      <h2 class="channel-name" id="displayChannelName">Nextcircuit</h2>
+      <div class="channel-handle">@next_circuit</div>
+      <p class="channel-bio" id="displayBio">
+        Embedded systems, STM32, ESP32, Arduino tutorials &amp; hardware engineering projects.
+      </p>
+    </header>
+
+    <section class="sidebar-section" aria-labelledby="social-heading">
+      <h3 id="social-heading" class="section-label">Official Channels</h3>
+      <div class="social-links">
+        <a href="https://youtube.com/@next_circuit" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Visit YouTube Channel">
+          <div class="social-btn-left">
+            <span class="icon-badge yt-badge" aria-hidden="true">▶</span>
+            <span class="truncate">YouTube Channel</span>
+          </div>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a href="https://github.com/Rahat5700" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Visit GitHub Profile">
+          <div class="social-btn-left">
+            <span class="icon-badge gh-badge" aria-hidden="true">GH</span>
+            <span class="truncate">GitHub (Rahat5700)</span>
+          </div>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="sidebar-section" aria-labelledby="software-heading">
+      <h3 id="software-heading" class="section-label">Software &amp; Apps</h3>
+      <div class="accordion-group">
+        
+        <article class="accordion-item" id="acc-windows">
+          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="list-windows" onclick="CreatorHub.toggleAccordion('acc-windows')">
+            <div class="social-btn-left">
+              <span class="icon-badge win-badge" aria-hidden="true">WIN</span>
+              <span>Windows</span>
+            </div>
+            <span class="accordion-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="accordion-panel" id="list-windows" role="region"></div>
+        </article>
+
+        <article class="accordion-item" id="acc-linux">
+          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="list-linux" onclick="CreatorHub.toggleAccordion('acc-linux')">
+            <div class="social-btn-left">
+              <span class="icon-badge lin-badge" aria-hidden="true">LNX</span>
+              <span>Linux</span>
+            </div>
+            <span class="accordion-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="accordion-panel" id="list-linux" role="region"></div>
+        </article>
+
+        <article class="accordion-item" id="acc-android">
+          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="list-android" onclick="CreatorHub.toggleAccordion('acc-android')">
+            <div class="social-btn-left">
+              <span class="icon-badge and-badge" aria-hidden="true">APK</span>
+              <span>Android</span>
+            </div>
+            <span class="accordion-chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="accordion-panel" id="list-android" role="region"></div>
+        </article>
+
+      </div>
+    </section>
+
+    <footer class="admin-sidebar-footer">
+      <button type="button" class="admin-trigger" onclick="CreatorHub.openAdminModal()" aria-label="Open Creator Admin Studio">
+        ⚡ Creator Admin Studio
+      </button>
+    </footer>
+  </nav>
+
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="page-title">
+        <h1>Channel Videos</h1>
+        <p>Live uploads automatically synced from YouTube (@next_circuit)</p>
+      </div>
+      <div class="controls">
+        <span class="sync-status" id="syncBadge" aria-live="polite">● Awaiting Channel Sync</span>
+        
+        <div class="custom-select-wrapper" style="width: 220px;">
+          <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0" onkeypress="if(event.key==='Enter') CreatorHub.toggleSortSelect()">
+            <span id="sortModeDisplay">Sort: Most Viewed First</span>
+            <span style="font-size: 10px; color: var(--text-secondary);">▼</span>
+          </div>
+          <div class="custom-options hidden" id="sortModeOptions">
+            <div class="custom-option" onclick="CreatorHub.selectSort('views', 'Sort: Most Viewed First')">Sort: Most Viewed First</div>
+            <div class="custom-option" onclick="CreatorHub.selectSort('newest', 'Sort: Newest Uploads First')">Sort: Newest Uploads First</div>
+          </div>
+          <input type="hidden" id="sortMode" value="views">
+        </div>
+      </div>
+    </header>
+
+    <section class="video-grid" id="videoGrid" aria-label="Video Library"></section>
+  </main>
+
+  <div class="modal-overlay" id="playerModal" onclick="CreatorHub.closePlayer()" role="dialog" aria-modal="true" aria-labelledby="playerTitle">
+    <div class="player-modal" onclick="event.stopPropagation()">
+      <header class="player-header">
+        <strong id="playerTitle" class="truncate text-sm sm:text-base">Now Playing</strong>
+        <button type="button" class="close-btn" onclick="CreatorHub.closePlayer()" aria-label="Close Video Player">✕ Close</button>
+      </header>
+      <div class="iframe-wrap">
+        <iframe id="youtubeIframe" src="" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="adminModal" onclick="CreatorHub.closeAdminModal()" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <div class="admin-modal" onclick="event.stopPropagation()">
+      <header class="flex justify-between items-center mb-2">
+        <h2 id="adminTitle">Creator Admin Studio</h2>
+        <button type="button" class="close-btn" onclick="CreatorHub.closeAdminModal()" aria-label="Close Admin Studio">✕ Close</button>
+      </header>
+      <p class="text-xs text-slate-400 mb-4">Hidden from normal visitors. Manage your GitHub software database and YouTube auto-sync below.</p>
+
+      <nav class="admin-tabs" aria-label="Admin settings tabs">
+        <button type="button" class="tab-btn active" id="tabBtnSoftware" onclick="CreatorHub.switchAdminTab('software')">1. Software &amp; Apps</button>
+        <button type="button" class="tab-btn" id="tabBtnSync" onclick="CreatorHub.switchAdminTab('sync')">2. Logo &amp; Sync</button>
+      </nav>
+
+      <div id="adminTabSoftware">
+        <form onsubmit="CreatorHub.addSoftwareItem(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-5 bg-[#0d1421] p-4 rounded-xl border border-[rgba(0,240,255,0.15)]">
+          <div class="sm:col-span-3">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Platform</label>
+            <div class="custom-select-wrapper">
+              <div class="custom-select" onclick="CreatorHub.toggleCustomSelect()" tabindex="0" onkeypress="if(event.key==='Enter') CreatorHub.toggleCustomSelect()">
+                <span id="swPlatformDisplay">Windows</span>
+                <span style="font-size: 10px; color: var(--text-secondary);">▼</span>
+              </div>
+              <div class="custom-options hidden" id="swPlatformOptions">
+                <div class="custom-option" onclick="CreatorHub.selectPlatform('windows', 'Windows')">Windows</div>
+                <div class="custom-option" onclick="CreatorHub.selectPlatform('linux', 'Linux')">Linux</div>
+                <div class="custom-option" onclick="CreatorHub.selectPlatform('android', 'Android')">Android</div>
+              </div>
+              <input type="hidden" id="swPlatform" value="windows">
+            </div>
+          </div>
+          <div class="sm:col-span-4">
+            <label for="swName" class="block text-xs font-semibold text-slate-400 mb-1">Software Name</label>
+            <input type="text" id="swName" placeholder="e.g. STM32CubeIDE" required class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+          </div>
+          <div class="sm:col-span-5">
+            <label for="swDriveUrl" class="block text-xs font-semibold text-slate-400 mb-1">Secure Drive Link</label>
+            <input type="url" id="swDriveUrl" placeholder="https://drive.google.com/..." required class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+          </div>
+          <div class="sm:col-span-12 flex justify-end mt-1">
+            <button type="submit" class="btn-primary">+ Add Item</button>
+          </div>
+        </form>
+
+        <div class="space-y-3 mb-5 max-h-56 overflow-y-auto pr-1" id="adminSoftwareManagerList"></div>
+
+        <div class="bg-[#05080e] p-4 rounded-xl border border-[rgba(0,240,255,0.25)]">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">GitHub Auto-Update (software.json)</span>
+            <div class="flex gap-2">
+              <button type="button" class="btn-secondary text-xs py-1.5 px-3" onclick="CreatorHub.copySoftwareJson()">Copy JSON</button>
+              <button type="button" class="btn-primary text-xs py-1.5 px-3" onclick="CreatorHub.downloadSoftwareJson()">Download JSON</button>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mb-2">Upload this file to your GitHub repository (<code class="text-cyan-300">Rahat5700/nextcircuit-data</code>) to push live updates securely.</p>
+          <textarea id="softwareJsonPreview" readonly aria-label="JSON Output Preview" rows="5" class="w-full bg-[#090d16] text-cyan-300 font-mono text-xs p-3 rounded-lg border border-slate-800 focus:outline-none"></textarea>
+        </div>
+      </div>
+
+      <div id="adminTabSync" class="hidden">
+        <div class="form-group">
+          <label for="inputName">Channel Name</label>
+          <input type="text" id="inputName" value="Nextcircuit" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+        </div>
+        <div class="form-group">
+          <label for="inputLogo">Custom Logo Image (Paste URL or Upload Image File)</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="text" id="inputLogo" placeholder="https://... (or choose file on right)" class="flex-1 bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+            <label class="btn-secondary text-xs flex items-center justify-center cursor-pointer whitespace-nowrap p-2">
+              📁 Upload Logo
+              <input type="file" id="inputLogoFile" accept="image/*" class="hidden" onchange="CreatorHub.handleLogoFileUpload(event)" />
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputGithubJsonUrl">Raw GitHub URL for software.json</label>
+          <input type="url" id="inputGithubJsonUrl" placeholder="https://raw.githubusercontent.com/Rahat5700/..." class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+        </div>
+        <div class="form-group">
+          <label for="inputChannelId">YouTube Channel ID (Starts with UC...)</label>
+          <input type="text" id="inputChannelId" placeholder="e.g. UCxxxxxxxxxxxxxxxxxxxxxx" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+        </div>
+        <div class="form-group">
+          <label for="inputApiKey">YouTube Data API v3 Key (Optional)</label>
+          <input type="password" id="inputApiKey" placeholder="Paste Google Cloud YouTube API Key" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+        </div>
+
+        <div class="flex flex-wrap gap-3 mt-6">
+          <button type="button" class="btn-primary flex-1 min-w-[150px]" onclick="CreatorHub.saveAdminSettings()">Save &amp; Sync All</button>
+          <button type="button" class="btn-secondary flex-1 min-w-[150px]" onclick="CreatorHub.exportStandaloneHTML()">Download HTML</button>
+          <button type="button" class="btn-secondary w-full" onclick="CreatorHub.lockAdminMode()">Lock Admin Mode</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
