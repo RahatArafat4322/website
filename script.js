@@ -9,12 +9,13 @@ const CreatorHub = (() => {
     </svg>
   `;
 
+  // YOUR PERMANENT SECURE CONFIGURATION IS HARDCODED HERE
   const DEFAULT_CONFIG = {
     channelName: "Nextcircuit",
     logoUrl: "image_499882.png",
-    githubJsonUrl: "https://raw.githubusercontent.com/Rahat5700/nextcircuit-data/main/software.json",
-    channelId: "",
-    apiKey: "",
+    githubJsonUrl: "https://raw.githubusercontent.com/RahatArafat4322/nextcircuit-data/main/software.json",
+    channelId: "UCYjqxJnWhLHKPc9mkuc2Mcg",
+    apiKey: "AIzaSyAAycUXr6jdqRUgQUym-Czq63BqDGOSvXg",
     software: {
       windows: [
         { name: "STM32CubeIDE (Windows x64)", driveUrl: "https://drive.google.com" },
@@ -31,6 +32,15 @@ const CreatorHub = (() => {
   };
 
   let config = JSON.parse(localStorage.getItem("nextcircuit_v3_config")) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  
+  // Force update config if hardcoded values changed but localStorage exists
+  if (config.channelId !== DEFAULT_CONFIG.channelId || config.apiKey !== DEFAULT_CONFIG.apiKey) {
+    config.channelId = DEFAULT_CONFIG.channelId;
+    config.apiKey = DEFAULT_CONFIG.apiKey;
+    config.githubJsonUrl = DEFAULT_CONFIG.githubJsonUrl;
+    localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
+  }
+
   let toastTimer;
 
   const sanitizeUrl = (url) => {
@@ -373,6 +383,23 @@ const CreatorHub = (() => {
     showToast("Configurations saved & encrypted locally.");
   };
 
+  // The actual function that downloads changes for GitHub uploads
+  const exportStandaloneHTML = () => {
+    document.body.classList.remove("admin-unlocked");
+    const updatedHTML = document.documentElement.outerHTML.replace(
+      /const DEFAULT_CONFIG = \{[\s\S]*?\n      \};/,
+      `const DEFAULT_CONFIG = ${JSON.stringify(config, null, 2)};`
+    );
+    const blob = new Blob(["<!DOCTYPE html>\n" + updatedHTML], { type: "text/html" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "index.html";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    document.body.classList.add("admin-unlocked");
+    showToast("Secure HTML exported successfully.");
+  };
+
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.custom-select-wrapper')) {
       const pOpts = document.getElementById('swPlatformOptions');
@@ -402,6 +429,6 @@ const CreatorHub = (() => {
     openAdminModal, closeAdminModal, switchAdminTab, handleLogoFileUpload,
     addSoftwareItem, removeSoftwareItem, copySoftwareJson, downloadSoftwareJson,
     saveAdminSettings, lockAdminMode, toggleCustomSelect, selectPlatform,
-    toggleSortSelect, selectSort
+    toggleSortSelect, selectSort, exportStandaloneHTML
   };
 })();
