@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Nextcircuit Official Creator Hub - Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
   <meta name="theme-color" content="#05080e" />
+  
+  <!-- Open Graph / Social Media SEO Tags -->
+  <meta property="og:title" content="Nextcircuit | Official Creator Hub" />
+  <meta property="og:description" content="Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
+  <meta property="og:image" content="image_499882.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
   <title>Nextcircuit | Official Creator Hub</title>
   
   <script src="https://cdn.tailwindcss.com" defer></script>
@@ -55,7 +62,6 @@
     <section class="sidebar-section" aria-labelledby="software-heading">
       <h3 id="software-heading" class="section-label">Software &amp; Apps</h3>
       <div class="accordion-group">
-        
         <article class="accordion-item" id="acc-windows">
           <button type="button" class="accordion-header" aria-expanded="false" aria-controls="list-windows" onclick="CreatorHub.toggleAccordion('acc-windows')">
             <div class="social-btn-left">
@@ -88,7 +94,6 @@
           </button>
           <div class="accordion-panel" id="list-android" role="region"></div>
         </article>
-
       </div>
     </section>
 
@@ -108,6 +113,10 @@
       <div class="controls">
         <span class="sync-status" id="syncBadge" aria-live="polite">● Awaiting Channel Sync</span>
         
+        <!-- Live Search Bar -->
+        <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="CreatorHub.handleSearch()" class="search-input" aria-label="Search videos">
+        
+        <!-- Custom Sort Dropdown -->
         <div class="custom-select-wrapper" style="width: 220px;">
           <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0" onkeypress="if(event.key==='Enter') CreatorHub.toggleSortSelect()">
             <span id="sortModeDisplay">Sort: Most Viewed First</span>
@@ -125,6 +134,7 @@
     <section class="video-grid" id="videoGrid" aria-label="Video Library"></section>
   </main>
 
+  <!-- Video Player Modal -->
   <div class="modal-overlay" id="playerModal" onclick="CreatorHub.closePlayer()" role="dialog" aria-modal="true" aria-labelledby="playerTitle">
     <div class="player-modal" onclick="event.stopPropagation()">
       <header class="player-header">
@@ -137,6 +147,7 @@
     </div>
   </div>
 
+  <!-- Creator Admin Studio -->
   <div class="modal-overlay" id="adminModal" onclick="CreatorHub.closeAdminModal()" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
     <div class="admin-modal" onclick="event.stopPropagation()">
       <header class="flex justify-between items-center mb-2">
@@ -225,12 +236,9 @@
 
         <div class="flex flex-wrap gap-3 mt-6">
           <button type="button" class="btn-primary flex-1 min-w-[150px]" onclick="CreatorHub.saveAdminSettings()">Save &amp; Sync All</button>
-          
-          <!-- This is the Download HTML Button you can use to export changes! -->
-          <button type="button" class="btn-secondary flex-1 min-w-[150px]" onclick="CreatorHub.exportStandaloneHTML()">Download HTML</button>
-          
           <button type="button" class="btn-secondary w-full" onclick="CreatorHub.lockAdminMode()">Lock Admin Mode</button>
         </div>
+        <p class="text-xs text-slate-400 w-full text-center mt-4">To update API keys, Channel ID, or Logo permanently, edit the DEFAULT_CONFIG in your script.js file on GitHub.</p>
       </div>
     </div>
   </div>
