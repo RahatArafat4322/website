@@ -9,7 +9,6 @@ const CreatorHub = (() => {
     </svg>
   `;
 
-  // YOUR PERMANENT SECURE CONFIGURATION IS HARDCODED HERE
   const DEFAULT_CONFIG = {
     channelName: "Nextcircuit",
     logoUrl: "image_499882.png",
@@ -33,7 +32,6 @@ const CreatorHub = (() => {
 
   let config = JSON.parse(localStorage.getItem("nextcircuit_v3_config")) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
   
-  // Force update config if hardcoded values changed but localStorage exists
   if (config.channelId !== DEFAULT_CONFIG.channelId || config.apiKey !== DEFAULT_CONFIG.apiKey) {
     config.channelId = DEFAULT_CONFIG.channelId;
     config.apiKey = DEFAULT_CONFIG.apiKey;
@@ -42,6 +40,7 @@ const CreatorHub = (() => {
   }
 
   let toastTimer;
+  let searchQuery = ""; // NEW: State for Search input
 
   const sanitizeUrl = (url) => {
     const trimmed = String(url).trim();
@@ -124,14 +123,33 @@ const CreatorHub = (() => {
     });
   };
 
+  // NEW: Triggers instantly when user types in the Search box
+  const handleSearch = () => {
+    searchQuery = document.getElementById("searchInput").value.toLowerCase();
+    renderVideos();
+  };
+
   const renderVideos = () => {
     const sortMode = document.getElementById("sortMode").value;
-    const sorted = [...(config.videos || [])].sort((a, b) => {
-      if (sortMode === "views") return (b.views || 0) - (a.views || 0);
-      return new Date(b.publishedAt) - new Date(a.publishedAt);
-    });
+    
+    // Filters array based on search text before sorting
+    const sorted = [...(config.videos || [])]
+      .filter(v => escapeHTML(v.title).toLowerCase().includes(searchQuery))
+      .sort((a, b) => {
+        if (sortMode === "views") return (b.views || 0) - (a.views || 0);
+        return new Date(b.publishedAt) - new Date(a.publishedAt);
+      });
 
     const gridEl = document.getElementById("videoGrid");
+
+    if (config.videos && config.videos.length > 0 && sorted.length === 0) {
+      gridEl.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 48px 32px; text-align: center;">
+          <h3 style="font-size: 18px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">No results found for "${escapeHTML(searchQuery)}"</h3>
+        </div>
+      `;
+      return;
+    }
 
     if (sorted.length === 0) {
       gridEl.innerHTML = `
@@ -167,6 +185,21 @@ const CreatorHub = (() => {
     `}).join("");
   };
 
+  // NEW: Injects animated skeleton placeholders while data loads
+  const renderSkeletons = () => {
+    const gridEl = document.getElementById("videoGrid");
+    gridEl.innerHTML = Array(6).fill(0).map(() => `
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-thumb"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-title-short"></div>
+          <div class="skeleton skeleton-meta"></div>
+        </div>
+      </div>
+    `).join("");
+  };
+
   const syncGitHubSoftware = async () => {
     if (!config.githubJsonUrl) return;
     try {
@@ -192,7 +225,13 @@ const CreatorHub = (() => {
       renderVideos();
       return;
     }
+    
     badge.textContent = "↻ Syncing...";
+    
+    // Display Skeleton Loaders if we don't have cached videos to show
+    if (!config.videos || config.videos.length === 0) {
+      renderSkeletons();
+    }
 
     try {
       if (config.apiKey && config.channelId) {
@@ -234,7 +273,11 @@ const CreatorHub = (() => {
     document.getElementById("playerTitle").textContent = title;
     document.getElementById("youtubeIframe").src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0`;
     document.getElementById("playerModal").classList.add("active");
-    document.getElementById("playerModal").focus();
+    
+    // Trap focus inside modal
+    setTimeout(() => {
+      document.querySelector('.close-btn').focus();
+    }, 100);
   };
 
   const closePlayer = () => {
@@ -383,23 +426,6 @@ const CreatorHub = (() => {
     showToast("Configurations saved & encrypted locally.");
   };
 
-  // The actual function that downloads changes for GitHub uploads
-  const exportStandaloneHTML = () => {
-    document.body.classList.remove("admin-unlocked");
-    const updatedHTML = document.documentElement.outerHTML.replace(
-      /const DEFAULT_CONFIG = \{[\s\S]*?\n      \};/,
-      `const DEFAULT_CONFIG = ${JSON.stringify(config, null, 2)};`
-    );
-    const blob = new Blob(["<!DOCTYPE html>\n" + updatedHTML], { type: "text/html" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "index.html";
-    a.click();
-    URL.revokeObjectURL(a.href);
-    document.body.classList.add("admin-unlocked");
-    showToast("Secure HTML exported successfully.");
-  };
-
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.custom-select-wrapper')) {
       const pOpts = document.getElementById('swPlatformOptions');
@@ -425,10 +451,10 @@ const CreatorHub = (() => {
   });
 
   return {
-    toggleAccordion, renderSidebar, renderVideos, openPlayer, closePlayer,
+    toggleAccordion, renderSidebar, renderVideos, handleSearch, openPlayer, closePlayer,
     openAdminModal, closeAdminModal, switchAdminTab, handleLogoFileUpload,
     addSoftwareItem, removeSoftwareItem, copySoftwareJson, downloadSoftwareJson,
     saveAdminSettings, lockAdminMode, toggleCustomSelect, selectPlatform,
-    toggleSortSelect, selectSort, exportStandaloneHTML
+    toggleSortSelect, selectSort
   };
 })();
