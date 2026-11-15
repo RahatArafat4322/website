@@ -56,10 +56,12 @@ body {
 .nav-btn:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
 .nav-btn.active { background: rgba(255, 255, 255, 0.08); color: var(--text-primary); font-weight: 600; }
 .social-btn-left { display: flex; align-items: center; gap: 12px; pointer-events: none; min-width: 0; }
-.icon-badge { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+
+/* Uniform, perfectly scaled 22px icon badge with clean contain sizing */
+.icon-badge { width: 22px; height: 22px; border-radius: 4px; object-fit: contain; flex-shrink: 0; pointer-events: none; }
 a.nav-btn .social-btn-left { pointer-events: auto; }
 
-/* Main Content Area - WITH overflow: hidden to lock items inside the rounded borders */
+/* Main Content Area */
 .main-content { 
   margin: 16px 16px 16px var(--sidebar-width); 
   flex: 1; 
@@ -70,7 +72,7 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
   border-radius: 24px; 
   border: 1px solid var(--border-subtle); 
   min-height: calc(100vh - 32px); 
-  overflow: hidden; /* CRITICAL FIX: Clips anything trying to spill outside the rounded box */
+  overflow: hidden; 
 }
 .view-section { display: none; }
 .view-section.active { display: block; animation: smoothFadeIn 0.4s ease forwards; }
@@ -155,7 +157,7 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
 .custom-option { padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 400; color: var(--text-secondary); }
 .custom-option:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
 
-/* MOBILE RESPONSIVE LAYOUT (Strict 30% / 70% rule ONLY for mobile users with safe container bounds) */
+/* MOBILE RESPONSIVE LAYOUT (30% / 70% rule for mobile) */
 @media (max-width: 768px) {
   body { display: flex; }
   .sidebar { 
@@ -180,11 +182,11 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
     padding: 16px 12px; 
     border-radius: 16px; 
     background-color: var(--bg-surface); 
-    overflow: hidden; /* CRITICAL: Clips cards inside the rounded mobile panel */
+    overflow: hidden; 
   }
 
   .video-grid { 
-    grid-template-columns: minmax(0, 1fr); /* Forces cards to stay inside mobile container */
+    grid-template-columns: minmax(0, 1fr); 
     gap: 16px; 
   }
 
