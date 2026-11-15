@@ -34,13 +34,15 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color
 .section-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 1px; }
 .social-links { display: flex; flex-direction: column; gap: 8px; }
 
-/* New Active Tab Styling */
+/* Fixed active tab styling & prevented icons from squishing */
 .nav-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 11px; color: var(--text-primary); font-size: 13.5px; font-weight: 600; cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .nav-btn:hover { background: var(--bg-card-hover); transform: translateX(3px); }
 .nav-btn.active { background: rgba(0, 240, 255, 0.1); border-color: var(--accent-cyan); color: var(--accent-cyan); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
 .nav-btn:active { transform: scale(0.96); }
-.social-btn-left { display: flex; align-items: center; gap: 10px; pointer-events: none; }
-.icon-badge { width: 28px; height: 28px; border-radius: 6px; pointer-events: none; }
+.social-btn-left { display: flex; align-items: center; gap: 10px; pointer-events: none; min-width: 0; }
+
+/* FIX: flex-shrink: 0 ensures the image icons never deform */
+.icon-badge { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 
 .admin-sidebar-footer { display: none; margin-top: auto; padding-top: 18px; border-top: 1px solid rgba(157, 78, 221, 0.35); }
 body.admin-unlocked .admin-sidebar-footer { display: block; }
@@ -77,7 +79,7 @@ body.admin-unlocked .admin-sidebar-footer { display: block; }
 .video-stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
 .views-pill { color: var(--accent-green); font-weight: 600; }
 
-/* Software Grid (replaces small lists) */
+/* Software Grid */
 .software-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
 .software-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: border-color 0.2s; }
 .software-card:hover { border-color: var(--accent-cyan); }
