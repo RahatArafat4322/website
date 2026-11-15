@@ -171,36 +171,39 @@ a.nav-btn .social-btn-left { pointer-events: auto; } /* Fix for external links *
 }
 
 /* FIXED MOBILE SIDEBAR & RESPONSIVE LAYOUT - Restores Full Sidebar Text */
+/* FIXED MOBILE SIDEBAR & RESPONSIVE LAYOUT */
 @media (max-width: 768px) {
-  :root { --sidebar-width: 160px; }
+  :root { --sidebar-width: 175px; } /* Widened so text fits perfectly without wrapping */
   .sidebar { 
-    padding: 24px 12px; 
-    align-items: flex-start; /* Aligns items to the left again */
-    background-color: var(--bg-canvas); /* Ensures it doesn't blend into the background */
+    padding: 20px 12px; 
+    align-items: flex-start; 
+    background-color: var(--bg-canvas); 
     border-right: 1px solid var(--border-subtle); 
   }
   .avatar-wrapper { width: 44px; height: 44px; margin-bottom: 16px; }
   
-  /* Restores the text elements */
   .channel-name { display: block; font-size: 15px; }
   .section-label { display: block; font-size: 10px; margin-bottom: 8px; }
-  .nav-btn span { display: inline; } 
+  .nav-btn span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } 
   
-  /* Hides only the bio to save vertical space */
   .channel-bio, .channel-handle { display: none; }
   
-  /* Scales down buttons but keeps them fully functional */
   .nav-btn { justify-content: flex-start; padding: 10px; font-size: 12px; }
-  .social-btn-left { gap: 10px; }
-  .icon-badge { width: 22px; height: 22px; }
+  .social-btn-left { gap: 10px; width: 100%; overflow: hidden; }
   
-  /* Adjusts the main content to fit next to the 160px sidebar */
+  /* This hides the ugly "uTu" text if an image file is broken or missing */
+  .icon-badge { width: 22px; height: 22px; flex-shrink: 0; color: transparent; }
+  
   .main-content { 
     margin: 12px 12px 12px var(--sidebar-width); 
     width: calc(100% - var(--sidebar-width) - 24px); 
-    padding: 24px 20px; 
+    padding: 20px 16px; 
     border-radius: 16px; 
   }
+  
+  /* Fixes the cards so they don't squeeze or break out of the box on small screens */
+  .video-grid { grid-template-columns: 1fr; gap: 16px; }
+  
   .controls { width: 100%; justify-content: space-between; gap: 12px; }
   .search-input, .custom-select-wrapper { width: 100% !important; }
 }
