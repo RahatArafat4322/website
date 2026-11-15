@@ -129,8 +129,12 @@ const CreatorHub = (() => {
 
   const syncGitHubSoftware = async () => {
     try {
-      // Correct Local Fetch
-      const res = await fetch(`software.json?t=${Date.now()}`);
+      // Secure local fetching constraint
+      const res = await fetch(`software.json?t=${Date.now()}`, { 
+        method: 'GET', 
+        mode: 'same-origin', 
+        headers: { 'Accept': 'application/json' } 
+      });
       if (!res.ok) return;
       const data = await res.json();
       if (data && (data.windows || data.linux || data.android || data.github)) {
@@ -149,7 +153,7 @@ const CreatorHub = (() => {
         if(document.getElementById('tab-github')?.classList.contains('active')) fetchGitHubRepos();
       }
     } catch (err) {
-      console.warn("Failed to sync software data.");
+      console.warn("Failed to sync software data securely.");
     }
   };
 
@@ -238,11 +242,20 @@ const CreatorHub = (() => {
 
     try {
       if (config.apiKey && config.channelId) {
-        const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${encodeURIComponent(config.apiKey)}&channelId=${encodeURIComponent(config.channelId)}&part=snippet,id&order=date&maxResults=30&type=video`);
+        // Secure credential stripping for external API calls
+        const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${encodeURIComponent(config.apiKey)}&channelId=${encodeURIComponent(config.channelId)}&part=snippet,id&order=date&maxResults=30&type=video`, {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'omit'
+        });
         const searchData = await searchRes.json();
         if (searchData.items && searchData.items.length > 0) {
           const ids = searchData.items.map(item => item.id.videoId).join(",");
-          const statsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?key=${encodeURIComponent(config.apiKey)}&id=${ids}&part=snippet,statistics`);
+          const statsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?key=${encodeURIComponent(config.apiKey)}&id=${ids}&part=snippet,statistics`, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'omit'
+          });
           const statsData = await statsRes.json();
 
           config.videos = statsData.items.map(v => ({
