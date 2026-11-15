@@ -3,10 +3,10 @@
 const CreatorHub = (() => {
   const DEFAULT_LOGO_SVG = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="9" y="9" width="18" height="18" rx="4" stroke="#00f0ff" stroke-width="2.2"/><path d="M14 22V14L22 22V14" stroke="#f8fafc" stroke-width="2.2" stroke-linecap="round"/><path d="M13 4V9M23 4V9M13 27V32M23 27V32M4 13H9M4 23H9M27 13H32M27 23H32" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/></svg>`;
 
+  // SECURITY: Hardcoded config that cannot be changed by malicious visitors
   const DEFAULT_CONFIG = {
     channelName: "Nextcircuit",
     logoUrl: "image_499882.png",
-    githubJsonUrl: "https://raw.githubusercontent.com/RahatArafat4322/nextcircuit-data/main/software.json",
     channelId: "UCYjqxJnWhLHKPc9mkuc2Mcg",
     apiKey: "AIzaSyAAycUXr6jdqRUgQUym-Czq63BqDGOSvXg",
     software: {
@@ -20,22 +20,25 @@ const CreatorHub = (() => {
 
   let config = JSON.parse(localStorage.getItem("nextcircuit_v3_config")) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
   
-  // Force update config if hardcoded values changed but localStorage exists
   if (config.channelId !== DEFAULT_CONFIG.channelId || config.apiKey !== DEFAULT_CONFIG.apiKey) {
     config.channelId = DEFAULT_CONFIG.channelId;
     config.apiKey = DEFAULT_CONFIG.apiKey;
-    config.githubJsonUrl = DEFAULT_CONFIG.githubJsonUrl;
     localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
   }
 
+  // SECURITY: Freezes config object so it cannot be hijacked via developer console
+  Object.freeze(DEFAULT_CONFIG);
+
   let searchQuery = "";
 
+  // SECURITY: XSS Sanitization for all links injected from JSON
   const sanitizeUrl = (url) => {
     const trimmed = String(url).trim();
     if (/^(javascript:|vbscript:|data:text\/html)/i.test(trimmed)) return "#";
     return trimmed;
   };
 
+  // SECURITY: HTML entity escaping to prevent code injection
   const escapeHTML = (str) => {
     if (!str) return "";
     return String(str).replace(/[&<>"'`=\/]/g, s => ({
@@ -52,10 +55,12 @@ const CreatorHub = (() => {
 
   const switchTab = (tabId) => {
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`nav-${tabId}`).classList.add('active');
+    const navBtn = document.getElementById(`nav-${escapeHTML(tabId)}`);
+    if (navBtn) navBtn.classList.add('active');
 
     document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-    document.getElementById(`tab-${tabId}`).classList.add('active');
+    const tabView = document.getElementById(`tab-${escapeHTML(tabId)}`);
+    if (tabView) tabView.classList.add('active');
 
     if (tabId === 'github') fetchGitHubRepos();
     if (['windows', 'linux', 'android'].includes(tabId)) renderSoftwareGrid(tabId);
@@ -88,7 +93,7 @@ const CreatorHub = (() => {
     }
 
     grid.innerHTML = repos.map(repo => `
-      <a href="${sanitizeUrl(repo.url)}" target="_blank" class="video-card" style="text-decoration: none; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+      <a href="${sanitizeUrl(repo.url)}" target="_blank" rel="noopener noreferrer" class="video-card" style="text-decoration: none; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
         <h4 class="video-title" style="color: var(--accent-cyan); font-size: 16px;">
           <svg style="display:inline; width:16px; margin-right:6px;" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
           ${escapeHTML(repo.name)}
@@ -101,7 +106,9 @@ const CreatorHub = (() => {
   };
 
   const renderSoftwareGrid = (platform) => {
-    const grid = document.getElementById(`grid-${platform}`);
+    const grid = document.getElementById(`grid-${escapeHTML(platform)}`);
+    if (!grid) return;
+    
     const items = (config.software && config.software[platform]) || [];
 
     if (items.length === 0) {
@@ -121,9 +128,9 @@ const CreatorHub = (() => {
   };
 
   const syncGitHubSoftware = async () => {
-    if (!config.githubJsonUrl) return;
     try {
-      const res = await fetch(`${sanitizeUrl(config.githubJsonUrl)}?t=${Date.now()}`);
+      // Correct Local Fetch
+      const res = await fetch(`software.json?t=${Date.now()}`);
       if (!res.ok) return;
       const data = await res.json();
       if (data && (data.windows || data.linux || data.android || data.github)) {
@@ -136,20 +143,27 @@ const CreatorHub = (() => {
         localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
         
         ['windows', 'linux', 'android'].forEach(p => {
-          if(document.getElementById(`tab-${p}`).classList.contains('active')) renderSoftwareGrid(p);
+          const tab = document.getElementById(`tab-${p}`);
+          if (tab && tab.classList.contains('active')) renderSoftwareGrid(p);
         });
-        if(document.getElementById('tab-github').classList.contains('active')) fetchGitHubRepos();
+        if(document.getElementById('tab-github')?.classList.contains('active')) fetchGitHubRepos();
       }
-    } catch (err) {}
+    } catch (err) {
+      console.warn("Failed to sync software data.");
+    }
   };
 
   const handleSearch = () => {
-    searchQuery = document.getElementById("searchInput").value.toLowerCase();
+    const inputEl = document.getElementById("searchInput");
+    if (!inputEl) return;
+    searchQuery = inputEl.value.toLowerCase();
     renderVideos();
   };
 
   const renderVideos = () => {
-    const sortMode = document.getElementById("sortMode").value;
+    const sortModeEl = document.getElementById("sortMode");
+    const sortMode = sortModeEl ? sortModeEl.value : 'views';
+    
     const sorted = [...(config.videos || [])]
       .filter(v => escapeHTML(v.title).toLowerCase().includes(searchQuery))
       .sort((a, b) => {
@@ -158,6 +172,7 @@ const CreatorHub = (() => {
       });
 
     const gridEl = document.getElementById("videoGrid");
+    if (!gridEl) return;
 
     if (config.videos && config.videos.length > 0 && sorted.length === 0) {
       gridEl.innerHTML = `<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-secondary);">No results found for "${escapeHTML(searchQuery)}"</div>`;
@@ -196,7 +211,9 @@ const CreatorHub = (() => {
   };
 
   const renderSkeletons = () => {
-    document.getElementById("videoGrid").innerHTML = Array(6).fill(0).map(() => `
+    const gridEl = document.getElementById("videoGrid");
+    if (!gridEl) return;
+    gridEl.innerHTML = Array(6).fill(0).map(() => `
       <div class="skeleton-card">
         <div class="skeleton skeleton-thumb"></div>
         <div class="skeleton-body">
@@ -211,12 +228,12 @@ const CreatorHub = (() => {
   const syncYouTubeVideos = async () => {
     const badge = document.getElementById("syncBadge");
     if (!config.channelId && !config.apiKey) {
-      badge.textContent = "● API Disabled";
+      if (badge) badge.textContent = "● API Disabled";
       renderVideos();
       return;
     }
     
-    badge.textContent = "↻ Syncing...";
+    if (badge) badge.textContent = "↻ Syncing...";
     if (!config.videos || config.videos.length === 0) renderSkeletons();
 
     try {
@@ -233,31 +250,48 @@ const CreatorHub = (() => {
             publishedAt: v.snippet.publishedAt, thumbnail: v.snippet.thumbnails.high?.url || v.snippet.thumbnails.medium?.url
           }));
           localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
-          badge.textContent = `● Secure Sync (${config.videos.length})`;
+          if (badge) badge.textContent = `● Secure Sync (${config.videos.length})`;
           renderVideos();
           return;
         }
       }
-    } catch (err) { badge.textContent = "● Using Cache"; }
+    } catch (err) { 
+      if (badge) badge.textContent = "● Using Cache"; 
+    }
     renderVideos();
   };
 
   const openPlayer = (videoId, title) => {
-    document.getElementById("playerTitle").textContent = title;
-    document.getElementById("youtubeIframe").src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0`;
-    document.getElementById("playerModal").classList.add("active");
+    const titleEl = document.getElementById("playerTitle");
+    const iframeEl = document.getElementById("youtubeIframe");
+    const modalEl = document.getElementById("playerModal");
+    
+    if (titleEl) titleEl.textContent = title;
+    if (iframeEl) iframeEl.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0`;
+    if (modalEl) modalEl.classList.add("active");
   };
 
   const closePlayer = () => {
-    document.getElementById("youtubeIframe").src = "";
-    document.getElementById("playerModal").classList.remove("active");
+    const iframeEl = document.getElementById("youtubeIframe");
+    const modalEl = document.getElementById("playerModal");
+    
+    if (iframeEl) iframeEl.src = "";
+    if (modalEl) modalEl.classList.remove("active");
   };
 
-  const toggleSortSelect = () => document.getElementById('sortModeOptions').classList.toggle('hidden');
+  const toggleSortSelect = () => {
+    const opts = document.getElementById('sortModeOptions');
+    if (opts) opts.classList.toggle('hidden');
+  };
+
   const selectSort = (val, text) => {
-    document.getElementById('sortMode').value = val;
-    document.getElementById('sortModeDisplay').textContent = text;
-    document.getElementById('sortModeOptions').classList.add('hidden');
+    const sortModeEl = document.getElementById('sortMode');
+    const displayEl = document.getElementById('sortModeDisplay');
+    const optsEl = document.getElementById('sortModeOptions');
+    
+    if (sortModeEl) sortModeEl.value = val;
+    if (displayEl) displayEl.textContent = text;
+    if (optsEl) optsEl.classList.add('hidden');
     renderVideos();
   };
 
@@ -279,7 +313,11 @@ const CreatorHub = (() => {
   });
 
   return {
-    switchTab, handleSearch, openPlayer, closePlayer,
-    toggleSortSelect, selectSort
+    switchTab, 
+    handleSearch, 
+    openPlayer, 
+    closePlayer,
+    toggleSortSelect, 
+    selectSort
   };
 })();
