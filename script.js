@@ -65,19 +65,13 @@ const CreatorHub = (() => {
     return num + " views";
   };
 
-  /* =====================
-     SPA TAB SWITCHING LOGIC
-     ===================== */
   const switchTab = (tabId) => {
-    // 1. Highlight Active Sidebar Button
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`nav-${tabId}`).classList.add('active');
 
-    // 2. Hide all Views, Show target View
     document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
     document.getElementById(`tab-${tabId}`).classList.add('active');
 
-    // 3. Trigger content fetch based on tab
     if (tabId === 'github' && !githubFetched) fetchGitHubRepos();
     if (['windows', 'linux', 'android'].includes(tabId)) renderSoftwareGrid(tabId);
   };
@@ -99,9 +93,6 @@ const CreatorHub = (() => {
     }
   };
 
-  /* =====================
-     GITHUB REPO LOGIC
-     ===================== */
   const fetchGitHubRepos = async () => {
     const grid = document.getElementById("githubGrid");
     grid.innerHTML = Array(6).fill(`<div class="skeleton-card"><div class="skeleton-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-meta"></div></div></div>`).join("");
@@ -138,9 +129,6 @@ const CreatorHub = (() => {
     `).join("");
   };
 
-  /* =====================
-     SOFTWARE GRID LOGIC
-     ===================== */
   const renderSoftwareGrid = (platform) => {
     const grid = document.getElementById(`grid-${platform}`);
     const items = (config.software && config.software[platform]) || [];
@@ -175,7 +163,6 @@ const CreatorHub = (() => {
         };
         localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
         
-        // Refresh active software tab if currently viewing one
         ['windows', 'linux', 'android'].forEach(p => {
           if(document.getElementById(`tab-${p}`).classList.contains('active')) renderSoftwareGrid(p);
         });
@@ -183,10 +170,6 @@ const CreatorHub = (() => {
     } catch (err) {}
   };
 
-
-  /* =====================
-     YOUTUBE VIDEO LOGIC
-     ===================== */
   const handleSearch = () => {
     searchQuery = document.getElementById("searchInput").value.toLowerCase();
     renderVideos();
@@ -286,9 +269,6 @@ const CreatorHub = (() => {
     renderVideos();
   };
 
-  /* =====================
-     UI UTILITIES & ADMIN
-     ===================== */
   const openPlayer = (videoId, title) => {
     document.getElementById("playerTitle").textContent = title;
     document.getElementById("youtubeIframe").src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0`;
@@ -300,6 +280,7 @@ const CreatorHub = (() => {
     document.getElementById("playerModal").classList.remove("active");
   };
 
+  // RESTORED GOD MODE FUNCTION
   const unlockAdminMode = () => {
     if (verifyAuth(prompt("Creator Auth Required:"))) {
       document.body.classList.add("admin-unlocked");
@@ -418,6 +399,15 @@ const CreatorHub = (() => {
     }
   });
 
+  // RESTORED KEYBOARD LISTENER FOR GOD MODE
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { closePlayer(); closeAdminModal(); }
+    if (e.ctrlKey && e.shiftKey && (e.key === "E" || e.key === "e")) {
+      e.preventDefault();
+      document.body.classList.contains("admin-unlocked") ? lockAdminMode() : unlockAdminMode();
+    }
+  });
+
   window.addEventListener("DOMContentLoaded", () => {
     initProfile();
     syncGitHubSoftware();
@@ -429,6 +419,6 @@ const CreatorHub = (() => {
     openAdminModal, closeAdminModal, switchAdminTab,
     addSoftwareItem, removeSoftwareItem, downloadSoftwareJson,
     saveAdminSettings, lockAdminMode, toggleCustomSelect, selectPlatform,
-    toggleSortSelect, selectSort
+    toggleSortSelect, selectSort, unlockAdminMode
   };
 })();
