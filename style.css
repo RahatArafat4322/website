@@ -77,9 +77,11 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color
   text-decoration: none;
 }
 .video-card:hover { 
-  transform: translateY(-6px); 
+  transform: translateY(-6px) scale(1.04); /* This makes the hovered card 4% bigger */
   border-color: var(--border-glow); 
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 25px rgba(0, 240, 255, 0.15); 
+  box-shadow: 0 25px 50px rgba(0,0,0,0.75), 0 0 35px rgba(0, 240, 255, 0.3); 
+  z-index: 10; /* Ensures the expanded card pops OVER the surrounding cards */
+  position: relative;
 }
 
 .thumb-container { position: relative; aspect-ratio: 16 / 9; background: #000; overflow: hidden; }
