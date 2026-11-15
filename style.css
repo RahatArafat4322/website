@@ -55,10 +55,9 @@ body {
 .nav-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
 .nav-btn:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
 .nav-btn.active { background: rgba(255, 255, 255, 0.08); color: var(--text-primary); font-weight: 600; }
-.social-btn-left { display: flex; align-items: center; gap: 12px; pointer-events: none; min-width: 0; }
+.social-btn-left { display: flex; align-items: center; gap: 14px; pointer-events: none; min-width: 0; }
 
-/* Uniform, perfectly scaled 22px icon badge with clean contain sizing */
-.icon-badge { width: 22px; height: 22px; border-radius: 4px; object-fit: contain; flex-shrink: 0; pointer-events: none; }
+.icon-badge { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; flex-shrink: 0; pointer-events: none; }
 a.nav-btn .social-btn-left { pointer-events: auto; }
 
 /* Main Content Area */
@@ -157,7 +156,7 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
 .custom-option { padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 400; color: var(--text-secondary); }
 .custom-option:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
 
-/* MOBILE RESPONSIVE LAYOUT (30% / 70% rule for mobile) */
+/* MOBILE RESPONSIVE LAYOUT (Strict 30% / 70% rule ONLY for mobile users) */
 @media (max-width: 768px) {
   body { display: flex; }
   .sidebar { 
@@ -173,7 +172,7 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
   .section-label { font-size: 8px; margin-bottom: 4px; }
   .nav-btn span { display: inline; font-size: 10px; } 
   .nav-btn { padding: 6px 4px; }
-  .icon-badge { width: 16px; height: 16px; }
+  .icon-badge { width: 22px; height: 22px; }
   
   .main-content { 
     margin: 8px 8px 8px 30vw; 
