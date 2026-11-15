@@ -54,7 +54,6 @@ const CreatorHub = (() => {
   };
 
   const switchTab = (tabId) => {
-    // Only target nav buttons that are part of the tab system (not external social links)
     document.querySelectorAll('button.nav-btn').forEach(btn => btn.classList.remove('active'));
     const navBtn = document.getElementById(`nav-${escapeHTML(tabId)}`);
     if (navBtn) navBtn.classList.add('active');
@@ -132,7 +131,6 @@ const CreatorHub = (() => {
 
   const syncGitHubSoftware = async () => {
     try {
-      // Secure local fetching constraint
       const res = await fetch(`software.json?t=${Date.now()}`, { 
         method: 'GET', 
         mode: 'same-origin', 
@@ -188,7 +186,7 @@ const CreatorHub = (() => {
 
     if (sorted.length === 0) {
       gridEl.innerHTML = `
-        <div style="grid-column: 1 / -1; padding: 60px 32px; background: var(--bg-card); border: 1px dashed var(--border-subtle); border-radius: 12px; text-align: center;">
+        <div style="grid-column: 1 / -1; padding: 60px 32px; background: rgba(0,0,0,0.2); border: 1px dashed var(--border-subtle); border-radius: 12px; text-align: center;">
           <h3 style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">Waiting for Feed Sync</h3>
           <p style="font-size: 13px; color: var(--text-secondary);">Videos will appear here securely once synced.</p>
         </div>
@@ -245,7 +243,6 @@ const CreatorHub = (() => {
 
     try {
       if (config.apiKey && config.channelId) {
-        // Secure credential stripping for external API calls
         const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${encodeURIComponent(config.apiKey)}&channelId=${encodeURIComponent(config.channelId)}&part=snippet,id&order=date&maxResults=30&type=video`, {
           method: 'GET',
           mode: 'cors',
