@@ -92,8 +92,8 @@ const CreatorHub = (() => {
       return;
     }
 
-    grid.innerHTML = repos.map(repo => `
-      <a href="${sanitizeUrl(repo.url)}" target="_blank" rel="noopener noreferrer" class="video-card" style="text-decoration: none; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+    grid.innerHTML = repos.map((repo, idx) => `
+      <a href="${sanitizeUrl(repo.url)}" target="_blank" rel="noopener noreferrer" class="video-card" style="text-decoration: none; padding: 20px; display: flex; flex-direction: column; gap: 10px; animation-delay: ${idx * 0.05}s;">
         <h4 class="video-title" style="color: var(--accent-cyan); font-size: 16px;">
           <svg style="display:inline; width:16px; margin-right:6px;" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
           ${escapeHTML(repo.name)}
@@ -116,8 +116,8 @@ const CreatorHub = (() => {
       return;
     }
 
-    grid.innerHTML = items.map(item => `
-      <div class="software-card">
+    grid.innerHTML = items.map((item, idx) => `
+      <div class="software-card" style="animation-delay: ${idx * 0.05}s;">
         <h4 class="software-name">${escapeHTML(item.name)}</h4>
         <a href="${sanitizeUrl(item.driveUrl)}" target="_blank" rel="noopener noreferrer" class="drive-btn">
           <svg style="width:16px; margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -193,12 +193,12 @@ const CreatorHub = (() => {
       return;
     }
 
-    gridEl.innerHTML = sorted.map((v) => {
+    gridEl.innerHTML = sorted.map((v, idx) => {
       const dateObj = new Date(v.publishedAt);
       const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown Date';
       
       return `
-      <article class="video-card" onclick="CreatorHub.openPlayer('${escapeHTML(v.id)}', '${escapeHTML(v.title).replace(/'/g, "\\'")}')">
+      <article class="video-card" onclick="CreatorHub.openPlayer('${escapeHTML(v.id)}', '${escapeHTML(v.title).replace(/'/g, "\\'")}')" style="animation-delay: ${idx * 0.05}s;">
         <div class="thumb-container">
           <img src="${sanitizeUrl(v.thumbnail)}" alt="${escapeHTML(v.title)}" loading="lazy" />
           <div class="play-overlay"><div class="play-circle">▶</div></div>
@@ -217,8 +217,8 @@ const CreatorHub = (() => {
   const renderSkeletons = () => {
     const gridEl = document.getElementById("videoGrid");
     if (!gridEl) return;
-    gridEl.innerHTML = Array(6).fill(0).map(() => `
-      <div class="skeleton-card">
+    gridEl.innerHTML = Array(6).fill(0).map((_, idx) => `
+      <div class="skeleton-card" style="animation-delay: ${idx * 0.05}s;">
         <div class="skeleton skeleton-thumb"></div>
         <div class="skeleton-body">
           <div class="skeleton skeleton-title"></div>
