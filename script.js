@@ -9,21 +9,18 @@ const CreatorHub = (() => {
     githubJsonUrl: "https://raw.githubusercontent.com/RahatArafat4322/nextcircuit-data/main/software.json",
     channelId: "UCYjqxJnWhLHKPc9mkuc2Mcg",
     apiKey: "AIzaSyAAycUXr6jdqRUgQUym-Czq63BqDGOSvXg",
-    githubUsername: "RahatArafat4322",
     software: {
-      windows: [
-        { name: "STM32CubeIDE (Windows x64)", driveUrl: "https://drive.google.com" },
-        { name: "CH340 / CP210x USB Drivers", driveUrl: "https://drive.google.com" }
-      ],
-      linux: [{ name: "STM32CubeProgrammer (Linux)", driveUrl: "https://drive.google.com" }],
-      android: [{ name: "Nextcircuit Serial Bluetooth Terminal", driveUrl: "https://drive.google.com" }]
+      github: [],
+      windows: [],
+      linux: [],
+      android: []
     },
-    videos: [],
-    repos: []
+    videos: []
   };
 
   let config = JSON.parse(localStorage.getItem("nextcircuit_v3_config")) || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
   
+  // Force update config if hardcoded values changed but localStorage exists
   if (config.channelId !== DEFAULT_CONFIG.channelId || config.apiKey !== DEFAULT_CONFIG.apiKey) {
     config.channelId = DEFAULT_CONFIG.channelId;
     config.apiKey = DEFAULT_CONFIG.apiKey;
@@ -31,9 +28,7 @@ const CreatorHub = (() => {
     localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
   }
 
-  let toastTimer;
   let searchQuery = "";
-  let githubFetched = false;
 
   const sanitizeUrl = (url) => {
     const trimmed = String(url).trim();
@@ -46,16 +41,6 @@ const CreatorHub = (() => {
     return String(str).replace(/[&<>"'`=\/]/g, s => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
     }[s]));
-  };
-
-  const verifyAuth = (input) => btoa(input) === "MTQxMjgzd2U=";
-
-  const showToast = (msg) => {
-    const el = document.getElementById("toastBanner");
-    el.textContent = msg;
-    el.classList.remove("hidden");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.add("hidden"), 3200);
   };
 
   const formatViews = (num) => {
@@ -72,7 +57,7 @@ const CreatorHub = (() => {
     document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
     document.getElementById(`tab-${tabId}`).classList.add('active');
 
-    if (tabId === 'github' && !githubFetched) fetchGitHubRepos();
+    if (tabId === 'github') fetchGitHubRepos();
     if (['windows', 'linux', 'android'].includes(tabId)) renderSoftwareGrid(tabId);
   };
 
@@ -93,37 +78,23 @@ const CreatorHub = (() => {
     }
   };
 
-  const fetchGitHubRepos = async () => {
+  const fetchGitHubRepos = () => {
     const grid = document.getElementById("githubGrid");
-    grid.innerHTML = Array(6).fill(`<div class="skeleton-card"><div class="skeleton-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-meta"></div></div></div>`).join("");
-    
-    try {
-      const res = await fetch(`https://api.github.com/users/${config.githubUsername}/repos?sort=updated&per_page=12`);
-      if (res.ok) {
-        config.repos = await res.json();
-        githubFetched = true;
-      }
-    } catch (e) {
-      console.warn("GitHub fetch failed");
-    }
+    const repos = (config.software && config.software.github) || [];
 
-    if (!config.repos || config.repos.length === 0) {
-      grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No public repositories found.</div>`;
+    if (repos.length === 0) {
+      grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No repositories linked yet. Edit software.json to add some!</div>`;
       return;
     }
 
-    grid.innerHTML = config.repos.map(repo => `
-      <a href="${sanitizeUrl(repo.html_url)}" target="_blank" class="video-card" style="text-decoration: none; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+    grid.innerHTML = repos.map(repo => `
+      <a href="${sanitizeUrl(repo.url)}" target="_blank" class="video-card" style="text-decoration: none; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
         <h4 class="video-title" style="color: var(--accent-cyan); font-size: 16px;">
           <svg style="display:inline; width:16px; margin-right:6px;" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
           ${escapeHTML(repo.name)}
         </h4>
-        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; flex: 1;">
-          ${escapeHTML(repo.description || 'No description provided.')}
-        </p>
-        <div class="video-stats" style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-          <span style="color: var(--text-muted);">Updated: ${new Date(repo.updated_at).toLocaleDateString()}</span>
-          ${repo.language ? `<span style="color: #fbbf24;">● ${escapeHTML(repo.language)}</span>` : ''}
+        <div class="video-stats" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <span style="color: var(--text-muted);">View on GitHub ↗</span>
         </div>
       </a>
     `).join("");
@@ -155,17 +126,19 @@ const CreatorHub = (() => {
       const res = await fetch(`${sanitizeUrl(config.githubJsonUrl)}?t=${Date.now()}`);
       if (!res.ok) return;
       const data = await res.json();
-      if (data && (data.windows || data.linux || data.android)) {
+      if (data && (data.windows || data.linux || data.android || data.github)) {
         config.software = {
           windows: Array.isArray(data.windows) ? data.windows : [],
           linux: Array.isArray(data.linux) ? data.linux : [],
-          android: Array.isArray(data.android) ? data.android : []
+          android: Array.isArray(data.android) ? data.android : [],
+          github: Array.isArray(data.github) ? data.github : []
         };
         localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
         
         ['windows', 'linux', 'android'].forEach(p => {
           if(document.getElementById(`tab-${p}`).classList.contains('active')) renderSoftwareGrid(p);
         });
+        if(document.getElementById('tab-github').classList.contains('active')) fetchGitHubRepos();
       }
     } catch (err) {}
   };
@@ -280,48 +253,6 @@ const CreatorHub = (() => {
     document.getElementById("playerModal").classList.remove("active");
   };
 
-  // RESTORED GOD MODE FUNCTION
-  const unlockAdminMode = () => {
-    if (verifyAuth(prompt("Creator Auth Required:"))) {
-      document.body.classList.add("admin-unlocked");
-      showToast("⚡ Secure Admin Unlocked");
-    } else {
-      alert("Security Lock: Invalid Credentials");
-    }
-  };
-
-  const lockAdminMode = () => {
-    document.body.classList.remove("admin-unlocked");
-    closeAdminModal();
-    showToast("🔒 Session Locked");
-  };
-
-  const openAdminModal = () => {
-    document.getElementById("inputName").value = config.channelName;
-    document.getElementById("inputLogo").value = config.logoUrl;
-    document.getElementById("inputGithubJsonUrl").value = config.githubJsonUrl;
-    document.getElementById("inputChannelId").value = config.channelId;
-    document.getElementById("inputApiKey").value = config.apiKey;
-    renderAdminSoftwareList();
-    document.getElementById("adminModal").classList.add("active");
-  };
-
-  const closeAdminModal = () => document.getElementById("adminModal").classList.remove("active");
-
-  const switchAdminTab = (tab) => {
-    document.getElementById("adminTabSoftware").classList.toggle("hidden", tab !== "software");
-    document.getElementById("adminTabSync").classList.toggle("hidden", tab !== "sync");
-    document.getElementById("tabBtnSoftware").classList.toggle("active", tab === "software");
-    document.getElementById("tabBtnSync").classList.toggle("active", tab === "sync");
-  };
-
-  const toggleCustomSelect = () => document.getElementById('swPlatformOptions').classList.toggle('hidden');
-  const selectPlatform = (val, text) => {
-    document.getElementById('swPlatform').value = val;
-    document.getElementById('swPlatformDisplay').textContent = text;
-    document.getElementById('swPlatformOptions').classList.add('hidden');
-  };
-
   const toggleSortSelect = () => document.getElementById('sortModeOptions').classList.toggle('hidden');
   const selectSort = (val, text) => {
     document.getElementById('sortMode').value = val;
@@ -330,82 +261,15 @@ const CreatorHub = (() => {
     renderVideos();
   };
 
-  const renderAdminSoftwareList = () => {
-    const container = document.getElementById("adminSoftwareManagerList");
-    const platforms = [{ key: "windows", label: "Windows" }, { key: "linux", label: "Linux" }, { key: "android", label: "Android" }];
-
-    container.innerHTML = platforms.map(p => `
-      <div class="bg-[#090d16] p-3 rounded-lg border border-slate-800">
-        <div class="text-xs font-bold text-cyan-400 uppercase mb-2">${p.label} (${(config.software[p.key]||[]).length})</div>
-        ${(config.software[p.key]||[]).length === 0 ? `<div class="text-xs text-slate-500">Empty</div>` : (config.software[p.key]||[]).map((item, idx) => `
-          <div class="flex justify-between items-center gap-2 py-1.5 border-b border-slate-800/70 last:border-none text-xs">
-            <span class="truncate text-slate-200">${escapeHTML(item.name)}</span>
-            <button type="button" onclick="CreatorHub.removeSoftwareItem('${p.key}', ${idx})" class="text-rose-400">Remove</button>
-          </div>
-        `).join("")}
-      </div>
-    `).join("");
-    document.getElementById("softwareJsonPreview").value = JSON.stringify(config.software, null, 2);
-  };
-
-  const addSoftwareItem = (e) => {
-    e.preventDefault();
-    const platform = document.getElementById("swPlatform").value;
-    const name = escapeHTML(document.getElementById("swName").value.trim());
-    const driveUrl = sanitizeUrl(document.getElementById("swDriveUrl").value.trim());
-    if (!name || driveUrl === "#") return;
-    config.software[platform].push({ name, driveUrl });
-    localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
-    e.target.reset();
-    renderAdminSoftwareList();
-    if(document.getElementById(`tab-${platform}`).classList.contains('active')) renderSoftwareGrid(platform);
-  };
-
-  const removeSoftwareItem = (platform, index) => {
-    config.software[platform].splice(index, 1);
-    localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
-    renderAdminSoftwareList();
-    if(document.getElementById(`tab-${platform}`).classList.contains('active')) renderSoftwareGrid(platform);
-  };
-
-  const downloadSoftwareJson = () => {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(config.software, null, 2)], { type: "application/json" }));
-    a.download = "software.json";
-    a.click();
-  };
-
-  const saveAdminSettings = () => {
-    config.channelName = escapeHTML(document.getElementById("inputName").value.trim());
-    config.logoUrl = sanitizeUrl(document.getElementById("inputLogo").value.trim());
-    config.githubJsonUrl = sanitizeUrl(document.getElementById("inputGithubJsonUrl").value.trim());
-    config.channelId = escapeHTML(document.getElementById("inputChannelId").value.trim());
-    config.apiKey = escapeHTML(document.getElementById("inputApiKey").value.trim());
-    localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
-    
-    initProfile();
-    closeAdminModal();
-    syncGitHubSoftware();
-    syncYouTubeVideos();
-    showToast("Configurations saved locally.");
-  };
-
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.custom-select-wrapper')) {
-      const pOpts = document.getElementById('swPlatformOptions');
       const sOpts = document.getElementById('sortModeOptions');
-      if (pOpts) pOpts.classList.add('hidden');
       if (sOpts) sOpts.classList.add('hidden');
     }
   });
 
-  // RESTORED KEYBOARD LISTENER FOR GOD MODE
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") { closePlayer(); closeAdminModal(); }
-    if (e.ctrlKey && e.shiftKey && (e.key === "E" || e.key === "e")) {
-      e.preventDefault();
-      document.body.classList.contains("admin-unlocked") ? lockAdminMode() : unlockAdminMode();
-    }
+    if (e.key === "Escape") closePlayer();
   });
 
   window.addEventListener("DOMContentLoaded", () => {
@@ -416,9 +280,6 @@ const CreatorHub = (() => {
 
   return {
     switchTab, handleSearch, openPlayer, closePlayer,
-    openAdminModal, closeAdminModal, switchAdminTab,
-    addSoftwareItem, removeSoftwareItem, downloadSoftwareJson,
-    saveAdminSettings, lockAdminMode, toggleCustomSelect, selectPlatform,
-    toggleSortSelect, selectSort, unlockAdminMode
+    toggleSortSelect, selectSort
   };
 })();
