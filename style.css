@@ -170,14 +170,26 @@ a.nav-btn .social-btn-left { pointer-events: auto; } /* Fix for external links *
   .main-content { padding: 32px 40px; }
 }
 
+/* FIXED MOBILE SIDEBAR & RESPONSIVE LAYOUT */
 @media (max-width: 768px) {
-  :root { --sidebar-width: 72px; }
-  .sidebar { padding: 24px 12px; align-items: center; }
-  .avatar-wrapper { width: 40px; height: 40px; margin-bottom: 24px; }
+  :root { --sidebar-width: 80px; }
+  .sidebar { 
+    padding: 20px 10px; 
+    align-items: center; 
+    background-color: var(--bg-canvas); 
+    border-right: 1px solid var(--border-subtle); 
+  }
+  .avatar-wrapper { width: 44px; height: 44px; margin-bottom: 20px; }
   .channel-name, .channel-bio, .channel-handle, .section-label, .nav-btn span { display: none; }
   .nav-btn { justify-content: center; padding: 12px; }
+  .social-btn-left { gap: 0; }
   .icon-badge { width: 24px; height: 24px; }
-  .main-content { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width) - 24px); margin-right: 12px; padding: 24px 20px; border-radius: 16px; }
-  .controls { width: 100%; justify-content: space-between; }
+  .main-content { 
+    margin: 12px 12px 12px var(--sidebar-width); 
+    width: calc(100% - var(--sidebar-width) - 24px); 
+    padding: 24px 20px; 
+    border-radius: 16px; 
+  }
+  .controls { width: 100%; justify-content: space-between; gap: 12px; }
   .search-input, .custom-select-wrapper { width: 100% !important; }
 }
