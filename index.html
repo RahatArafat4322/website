@@ -1,210 +1,201 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Nextcircuit Official Creator Hub - Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
-  <meta name="theme-color" content="#282c32" />
+:root {
+  --sidebar-width: 280px; 
+  --bg-canvas: #282c32;   
+  --bg-surface: #353b43;  
+  --bg-card: rgba(20, 24, 30, 0.6);
+  --bg-card-hover: rgba(30, 36, 45, 0.8);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.16);
+  --accent-cyan: #22d3ee;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { 
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+  background-color: var(--bg-canvas); 
+  color: var(--text-primary); 
+  display: flex; 
+  min-height: 100vh; 
+  overflow-x: hidden; 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-canvas); }
+::-webkit-scrollbar-thumb { background: #4e5563; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+.sidebar { 
+  width: var(--sidebar-width); 
+  position: fixed; 
+  top: 0; left: 0; bottom: 0; 
+  display: flex; 
+  flex-direction: column; 
+  padding: 32px 24px; 
+  z-index: 40; 
+  overflow-y: auto; 
+  background-color: transparent; 
+  border-right: none; 
+}
+.profile-box { padding-bottom: 24px; border-bottom: 1px solid var(--border-subtle); }
+.avatar-wrapper { width: 56px; height: 56px; margin-bottom: 16px; }
+.avatar { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-subtle); }
+.channel-name { font-size: 18px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
+.channel-handle { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
+.channel-bio { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.sidebar-section { margin-top: 28px; }
+.section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.05em; }
+.social-links { display: flex; flex-direction: column; gap: 4px; }
+
+.nav-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+.nav-btn:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
+.nav-btn.active { background: rgba(255, 255, 255, 0.08); color: var(--text-primary); font-weight: 600; }
+.social-btn-left { display: flex; align-items: center; gap: 14px; pointer-events: none; min-width: 0; }
+
+/* MUCH BIGGER ICONS: Upgraded from 22px to 28px with smoother 6px rounding */
+.icon-badge { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; flex-shrink: 0; pointer-events: none; }
+a.nav-btn .social-btn-left { pointer-events: auto; }
+
+/* Main Content Area */
+.main-content { 
+  margin: 16px 16px 16px var(--sidebar-width); 
+  flex: 1; 
+  padding: 44px 56px; 
+  max-width: 1600px; 
+  width: calc(100% - var(--sidebar-width) - 32px); 
+  background-color: var(--bg-surface); 
+  border-radius: 24px; 
+  border: 1px solid var(--border-subtle); 
+  min-height: calc(100vh - 32px); 
+  overflow: hidden; 
+}
+.view-section { display: none; }
+.view-section.active { display: block; animation: smoothFadeIn 0.4s ease forwards; }
+
+@keyframes smoothFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 24px; }
+.page-title h1 { font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
+.page-title p { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
+.controls { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.search-input { width: 220px; padding: 10px 14px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-subtle); border-radius: 8px; color: var(--text-primary); font-size: 13px; font-weight: 400; outline: none; transition: border-color 0.2s; }
+.search-input:focus { border-color: var(--text-muted); }
+.sync-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 12px; border-radius: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+
+/* Unified Grid System */
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+
+@keyframes elegantSlideUp {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.video-card { 
+  background: var(--bg-card); 
+  border: 1px solid var(--border-subtle); 
+  border-radius: 12px; 
+  overflow: hidden; 
+  cursor: pointer; 
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; 
+  display: flex; 
+  flex-direction: column; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  animation: elegantSlideUp 0.5s ease forwards;
+  opacity: 0; 
+  text-decoration: none;
+}
+
+.video-card:hover { 
+  transform: translateY(-4px); 
+  border-color: var(--border-hover); 
+  background: var(--bg-card-hover);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); 
+}
+
+.thumb-container { position: relative; aspect-ratio: 16 / 9; background: #000; overflow: hidden; border-bottom: 1px solid var(--border-subtle); }
+.thumb-container img { width: 100%; height: 100%; object-fit: cover; }
+.play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+.video-card:hover .play-overlay { opacity: 1; }
+.play-circle { width: 48px; height: 48px; border-radius: 50%; background: var(--text-primary); color: #000; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; padding-left: 4px; }
+
+.card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; }
+.video-title { font-size: 15px; font-weight: 500; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text-primary); letter-spacing: -0.01em; }
+.video-stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+.views-pill { color: var(--text-secondary); }
+
+.drive-btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: var(--text-primary); font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.2s; margin-top: auto; }
+.video-card:hover .drive-btn { background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.2); }
+
+@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+.skeleton { background: linear-gradient(90deg, #353b43 25%, #424a54 50%, #353b43 75%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border-radius: 4px; }
+.skeleton-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 100%; opacity: 0; animation: elegantSlideUp 0.5s ease forwards; }
+.skeleton-thumb { width: 100%; aspect-ratio: 16 / 9; border-radius: 0; }
+.skeleton-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.skeleton-title { height: 16px; width: 85%; }
+.skeleton-meta { height: 12px; width: 40%; margin-top: auto; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); display: flex !important; align-items: center; justify-content: center; z-index: 100; padding: 24px; opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; }
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.player-modal { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: scale(0.98); transition: transform 0.3s ease; width: 100%; max-width: 1020px; }
+.modal-overlay.active .player-modal { transform: scale(1); }
+.player-header { padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); background: var(--bg-card); }
+.close-btn { background: transparent; border: 1px solid var(--border-subtle); padding: 6px 12px; border-radius: 6px; font-weight: 500; font-size: 13px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; }
+.close-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+.iframe-wrap { aspect-ratio: 16 / 9; width: 100%; background: #000; }
+.iframe-wrap iframe { width: 100%; height: 100%; border: none; }
+
+.custom-select-wrapper { position: relative; width: 100%; }
+.custom-select { width: 100%; padding: 10px 14px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 13px; font-weight: 400; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: border-color 0.2s; }
+.custom-select:hover { border-color: var(--text-muted); }
+.custom-options { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; z-index: 50; overflow: hidden; display: block !important; transition: all 0.2s; transform: translateY(0); opacity: 1; visibility: visible; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+.custom-options.hidden { opacity: 0; visibility: hidden; transform: translateY(-4px); pointer-events: none; }
+.custom-option { padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 400; color: var(--text-secondary); }
+.custom-option:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+
+/* MOBILE RESPONSIVE LAYOUT (30% / 70% rule for mobile) */
+@media (max-width: 768px) {
+  body { display: flex; }
+  .sidebar { 
+    position: fixed; 
+    width: 30vw; 
+    min-width: 110px;
+    padding: 16px 6px; 
+    background-color: transparent; 
+  }
+  .avatar-wrapper { width: 32px; height: 32px; margin-bottom: 10px; }
+  .channel-name { font-size: 12px; }
+  .channel-bio, .channel-handle { display: none; }
+  .section-label { font-size: 8px; margin-bottom: 4px; }
+  .nav-btn span { display: inline; font-size: 10px; } 
+  .nav-btn { padding: 6px 4px; }
+  .icon-badge { width: 22px; height: 22px; } /* Proportionate on mobile */
   
-  <!-- Strict Security Headers -->
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://*.googleusercontent.com; frame-src https://www.youtube.com; connect-src 'self' https://api.github.com https://www.googleapis.com;" />
-  
-  <meta property="og:title" content="Nextcircuit | Official Creator Hub" />
-  <meta property="og:description" content="Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
-  <meta property="og:image" content="image_499882.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  
-  <title>Nextcircuit | Official Creator Hub</title>
-  
-  <script src="https://cdn.tailwindcss.com" defer></script>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-</head>
-<body>
+  .main-content { 
+    margin: 8px 8px 8px 30vw; 
+    margin-left: max(30vw, 110px);
+    width: calc(70vw - 16px); 
+    padding: 16px 12px; 
+    border-radius: 16px; 
+    background-color: var(--bg-surface); 
+    overflow: hidden; 
+  }
 
-  <!-- Left Sidebar Navigation -->
-  <nav class="sidebar" aria-label="Main Navigation">
-    <header class="profile-box">
-      <div class="avatar-wrapper">
-        <div class="avatar" id="avatarContainer" aria-hidden="true"></div>
-      </div>
-      <h2 class="channel-name" id="displayChannelName">Nextcircuit</h2>
-      <div class="channel-handle">@next_circuit</div>
-      <p class="channel-bio" id="displayBio">
-        Embedded systems, STM32, ESP32, Arduino tutorials &amp; hardware engineering projects.
-      </p>
-    </header>
+  .video-grid { 
+    grid-template-columns: minmax(0, 1fr); 
+    gap: 16px; 
+  }
 
-    <section class="sidebar-section">
-      <h3 class="section-label">Content</h3>
-      <div class="social-links">
-        <button class="social-btn nav-btn active" onclick="CreatorHub.switchTab('youtube')" id="nav-youtube">
-          <div class="social-btn-left">
-            <img src="youtube.png" alt="YouTube" class="icon-badge" />
-            <span class="truncate">YouTube Videos</span>
-          </div>
-        </button>
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('github')" id="nav-github">
-          <div class="social-btn-left">
-            <img src="github.png" alt="GitHub" class="icon-badge" />
-            <span class="truncate">GitHub Repositories</span>
-          </div>
-        </button>
-      </div>
-    </section>
+  .video-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 
-    <section class="sidebar-section">
-      <h3 class="section-label">Software Links</h3>
-      <div class="social-links">
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('windows')" id="nav-windows">
-          <div class="social-btn-left">
-            <img src="windows.png" alt="Windows" class="icon-badge" />
-            <span>Windows Software</span>
-          </div>
-        </button>
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('linux')" id="nav-linux">
-          <div class="social-btn-left">
-            <img src="linux.png" alt="Linux" class="icon-badge" />
-            <span>Linux Software</span>
-          </div>
-        </button>
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('android')" id="nav-android">
-          <div class="social-btn-left">
-            <img src="android.png" alt="Android" class="icon-badge" />
-            <span>Android Apps</span>
-          </div>
-        </button>
-      </div>
-    </section>
-
-    <section class="sidebar-section">
-      <h3 class="section-label">Social Media Links</h3>
-      <div class="social-links">
-        <a href="https://youtube.com/@next_circuit" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
-          <div class="social-btn-left">
-            <img src="youtube.png" alt="YouTube" class="icon-badge" />
-            <span>YouTube</span>
-          </div>
-        </a>
-        <a href="https://github.com/RahatArafat4322" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
-          <div class="social-btn-left">
-            <img src="github.png" alt="GitHub" class="icon-badge" />
-            <span>GitHub</span>
-          </div>
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
-          <div class="social-btn-left">
-            <img src="discord.png" alt="Discord" class="icon-badge" />
-            <span>Discord</span>
-          </div>
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
-          <div class="social-btn-left">
-            <img src="facebook.png" alt="Facebook" class="icon-badge" />
-            <span>Facebook</span>
-          </div>
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
-          <div class="social-btn-left">
-            <img src="linkedin.png" alt="LinkedIn" class="icon-badge" />
-            <span>LinkedIn</span>
-          </div>
-        </a>
-      </div>
-    </section>
-  </nav>
-
-  <!-- Main Content Area -->
-  <main class="main-content">
-    
-    <!-- YOUTUBE TAB VIEW -->
-    <div id="tab-youtube" class="view-section active">
-      <header class="top-bar">
-        <div class="page-title">
-          <h1>Channel Videos</h1>
-          <p>Live uploads automatically synced from YouTube (@next_circuit)</p>
-        </div>
-        <div class="controls">
-          <span class="sync-status" id="syncBadge">● Awaiting Sync</span>
-          <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="CreatorHub.handleSearch()" class="search-input">
-          <div class="custom-select-wrapper" style="width: 200px;">
-            <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0">
-              <span id="sortModeDisplay">Sort: Most Viewed</span>
-              <span style="font-size: 10px; color: var(--text-muted);">▼</span>
-            </div>
-            <div class="custom-options hidden" id="sortModeOptions">
-              <div class="custom-option" onclick="CreatorHub.selectSort('views', 'Sort: Most Viewed')">Sort: Most Viewed</div>
-              <div class="custom-option" onclick="CreatorHub.selectSort('newest', 'Sort: Newest First')">Sort: Newest First</div>
-            </div>
-            <input type="hidden" id="sortMode" value="views">
-          </div>
-        </div>
-      </header>
-      <section class="video-grid" id="videoGrid"></section>
-    </div>
-
-    <!-- GITHUB TAB VIEW -->
-    <div id="tab-github" class="view-section">
-      <header class="top-bar">
-        <div class="page-title">
-          <h1>Repositories</h1>
-          <p>Live codebase synced securely from software.json</p>
-        </div>
-      </header>
-      <section class="video-grid" id="githubGrid"></section>
-    </div>
-
-    <!-- SOFTWARE TAB VIEWS -->
-    <div id="tab-windows" class="view-section">
-      <header class="top-bar">
-        <div class="page-title">
-          <h1>Windows Software</h1>
-          <p>Secure Google Drive download links for Windows environments.</p>
-        </div>
-      </header>
-      <section class="video-grid" id="grid-windows"></section>
-    </div>
-
-    <div id="tab-linux" class="view-section">
-      <header class="top-bar">
-        <div class="page-title">
-          <h1>Linux Software</h1>
-          <p>Secure Google Drive download links for Linux environments.</p>
-        </div>
-      </header>
-      <section class="video-grid" id="grid-linux"></section>
-    </div>
-
-    <div id="tab-android" class="view-section">
-      <header class="top-bar">
-        <div class="page-title">
-          <h1>Android Apps</h1>
-          <p>Secure Google Drive download links for Android APKs.</p>
-        </div>
-      </header>
-      <section class="video-grid" id="grid-android"></section>
-    </div>
-  </main>
-
-  <!-- Video Player Modal -->
-  <div class="modal-overlay" id="playerModal" onclick="CreatorHub.closePlayer()">
-    <div class="player-modal" onclick="event.stopPropagation()">
-      <header class="player-header">
-        <strong id="playerTitle" class="truncate text-sm sm:text-base font-medium">Now Playing</strong>
-        <button type="button" class="close-btn" onclick="CreatorHub.closePlayer()">✕ Close</button>
-      </header>
-      <div class="iframe-wrap">
-        <iframe id="youtubeIframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    </div>
-  </div>
-
-</body>
-</html>
+  .controls { width: 100%; justify-content: space-between; gap: 8px; }
+  .search-input, .custom-select-wrapper { width: 100% !important; }
+}
