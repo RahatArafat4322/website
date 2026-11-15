@@ -24,8 +24,6 @@
 </head>
 <body>
 
-  <div id="toastBanner" role="alert" class="fixed bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 w-[90%] sm:w-auto z-50 hidden bg-[#0d1421] border border-[rgba(0,240,255,0.45)] text-slate-100 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium backdrop-blur-md text-center sm:text-left transition-opacity duration-300"></div>
-
   <!-- Left Sidebar Navigation -->
   <nav class="sidebar" aria-label="Main Navigation">
     <header class="profile-box">
@@ -80,10 +78,6 @@
         </button>
       </div>
     </section>
-
-    <footer class="admin-sidebar-footer">
-      <button type="button" class="admin-trigger" onclick="CreatorHub.openAdminModal()">⚡ Creator Admin Studio</button>
-    </footer>
   </nav>
 
   <!-- Main Content Area -->
@@ -120,15 +114,13 @@
       <header class="top-bar">
         <div class="page-title">
           <h1>GitHub Repositories</h1>
-          <p>Live codebase synced directly from GitHub (@RahatArafat4322)</p>
+          <p>Live codebase synced securely from software.json</p>
         </div>
       </header>
-      <section class="video-grid" id="githubGrid">
-        <!-- Repos will inject here -->
-      </section>
+      <section class="video-grid" id="githubGrid"></section>
     </div>
 
-    <!-- SOFTWARE TAB VIEWS (Replaces Accordions) -->
+    <!-- SOFTWARE TAB VIEWS -->
     <div id="tab-windows" class="view-section">
       <header class="top-bar">
         <div class="page-title">
@@ -158,7 +150,6 @@
       </header>
       <section class="software-grid" id="grid-android"></section>
     </div>
-
   </main>
 
   <!-- Video Player Modal -->
@@ -174,88 +165,5 @@
     </div>
   </div>
 
-  <!-- Creator Admin Studio -->
-  <div class="modal-overlay" id="adminModal" onclick="CreatorHub.closeAdminModal()">
-    <div class="admin-modal" onclick="event.stopPropagation()">
-      <header class="flex justify-between items-center mb-2">
-        <h2 id="adminTitle">Creator Admin Studio</h2>
-        <button type="button" class="close-btn" onclick="CreatorHub.closeAdminModal()">✕ Close</button>
-      </header>
-      <nav class="admin-tabs">
-        <button type="button" class="tab-btn active" id="tabBtnSoftware" onclick="CreatorHub.switchAdminTab('software')">1. Software &amp; Apps</button>
-        <button type="button" class="tab-btn" id="tabBtnSync" onclick="CreatorHub.switchAdminTab('sync')">2. Logo &amp; Sync</button>
-      </nav>
-
-      <div id="adminTabSoftware">
-        <form onsubmit="CreatorHub.addSoftwareItem(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-5 bg-[#0d1421] p-4 rounded-xl border border-[rgba(0,240,255,0.15)]">
-          <div class="sm:col-span-3">
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Platform</label>
-            <div class="custom-select-wrapper">
-              <div class="custom-select" onclick="CreatorHub.toggleCustomSelect()">
-                <span id="swPlatformDisplay">Windows</span>
-                <span style="font-size: 10px; color: var(--text-secondary);">▼</span>
-              </div>
-              <div class="custom-options hidden" id="swPlatformOptions">
-                <div class="custom-option" onclick="CreatorHub.selectPlatform('windows', 'Windows')">Windows</div>
-                <div class="custom-option" onclick="CreatorHub.selectPlatform('linux', 'Linux')">Linux</div>
-                <div class="custom-option" onclick="CreatorHub.selectPlatform('android', 'Android')">Android</div>
-              </div>
-              <input type="hidden" id="swPlatform" value="windows">
-            </div>
-          </div>
-          <div class="sm:col-span-4">
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Software Name</label>
-            <input type="text" id="swName" placeholder="e.g. STM32CubeIDE" required class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-          </div>
-          <div class="sm:col-span-5">
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Secure Drive Link</label>
-            <input type="url" id="swDriveUrl" placeholder="https://drive.google.com/..." required class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-          </div>
-          <div class="sm:col-span-12 flex justify-end mt-1">
-            <button type="submit" class="btn-primary">+ Add Item</button>
-          </div>
-        </form>
-        <div class="space-y-3 mb-5 max-h-56 overflow-y-auto pr-1" id="adminSoftwareManagerList"></div>
-        <div class="bg-[#05080e] p-4 rounded-xl border border-[rgba(0,240,255,0.25)]">
-          <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
-            <span class="text-xs font-bold text-cyan-400">GITHUB AUTO-UPDATE</span>
-            <div class="flex gap-2">
-              <button type="button" class="btn-primary text-xs py-1.5 px-3" onclick="CreatorHub.downloadSoftwareJson()">Download JSON</button>
-            </div>
-          </div>
-          <p class="text-xs text-slate-400 mb-2">Upload to GitHub (<code class="text-cyan-300">RahatArafat4322/nextcircuit-data</code>) to push live updates.</p>
-          <textarea id="softwareJsonPreview" readonly rows="4" class="w-full bg-[#090d16] text-cyan-300 font-mono text-xs p-3 rounded-lg border border-slate-800 outline-none"></textarea>
-        </div>
-      </div>
-
-      <div id="adminTabSync" class="hidden">
-        <div class="form-group">
-          <label>Channel Name</label>
-          <input type="text" id="inputName" value="Nextcircuit" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-        </div>
-        <div class="form-group">
-          <label>Custom Logo Image URL</label>
-          <input type="text" id="inputLogo" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-        </div>
-        <div class="form-group">
-          <label>Raw GitHub URL (software.json)</label>
-          <input type="url" id="inputGithubJsonUrl" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-        </div>
-        <div class="form-group">
-          <label>YouTube Channel ID</label>
-          <input type="text" id="inputChannelId" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-        </div>
-        <div class="form-group">
-          <label>YouTube API Key</label>
-          <input type="password" id="inputApiKey" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-        </div>
-        <div class="flex gap-3 mt-6">
-          <button type="button" class="btn-primary flex-1" onclick="CreatorHub.saveAdminSettings()">Save Locally</button>
-          <button type="button" class="btn-secondary w-full" onclick="CreatorHub.lockAdminMode()">Lock Admin Mode</button>
-        </div>
-        <p class="text-xs text-slate-400 w-full text-center mt-4">To update API keys or Logo permanently, edit DEFAULT_CONFIG in script.js on GitHub.</p>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
