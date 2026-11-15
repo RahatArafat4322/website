@@ -1,7 +1,7 @@
 :root {
-  --sidebar-width: 280px; /* Normal desktop sidebar width */
-  --bg-canvas: #282c32;   /* Background and rest of the canvas */
-  --bg-surface: #353b43;  /* Inside the right-side rounded panel */
+  --sidebar-width: 280px; 
+  --bg-canvas: #282c32;   
+  --bg-surface: #353b43;  
   --bg-card: rgba(20, 24, 30, 0.6);
   --bg-card-hover: rgba(30, 36, 45, 0.8);
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -16,7 +16,7 @@
 
 body { 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-  background-color: var(--bg-canvas); /* #282c32 */
+  background-color: var(--bg-canvas); 
   color: var(--text-primary); 
   display: flex; 
   min-height: 100vh; 
@@ -30,7 +30,6 @@ body {
 ::-webkit-scrollbar-thumb { background: #4e5563; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
-/* Desktop Sidebar (Normal full experience) */
 .sidebar { 
   width: var(--sidebar-width); 
   position: fixed; 
@@ -53,7 +52,6 @@ body {
 .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.05em; }
 .social-links { display: flex; flex-direction: column; gap: 4px; }
 
-/* Modern Nav Buttons */
 .nav-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
 .nav-btn:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
 .nav-btn.active { background: rgba(255, 255, 255, 0.08); color: var(--text-primary); font-weight: 600; }
@@ -61,24 +59,24 @@ body {
 .icon-badge { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 a.nav-btn .social-btn-left { pointer-events: auto; }
 
-/* Desktop Main Content Area (Normal full experience with #353b43) */
+/* Main Content Area - WITH overflow: hidden to lock items inside the rounded borders */
 .main-content { 
   margin: 16px 16px 16px var(--sidebar-width); 
   flex: 1; 
   padding: 44px 56px; 
   max-width: 1600px; 
   width: calc(100% - var(--sidebar-width) - 32px); 
-  background-color: var(--bg-surface); /* #353b43 */
+  background-color: var(--bg-surface); 
   border-radius: 24px; 
   border: 1px solid var(--border-subtle); 
   min-height: calc(100vh - 32px); 
+  overflow: hidden; /* CRITICAL FIX: Clips anything trying to spill outside the rounded box */
 }
 .view-section { display: none; }
 .view-section.active { display: block; animation: smoothFadeIn 0.4s ease forwards; }
 
 @keyframes smoothFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Top Bar & Typography */
 .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 24px; }
 .page-title h1 { font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.02em; }
 .page-title p { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
@@ -95,7 +93,6 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
   100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Premium Dashboard Card - NO ZOOM */
 .video-card { 
   background: var(--bg-card); 
   border: 1px solid var(--border-subtle); 
@@ -158,32 +155,45 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
 .custom-option { padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 400; color: var(--text-secondary); }
 .custom-option:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
 
-/* MOBILE RESPONSIVE LAYOUT (Applies the 30% / 70% Rule strictly for mobile users) */
+/* MOBILE RESPONSIVE LAYOUT (Strict 30% / 70% rule ONLY for mobile users with safe container bounds) */
 @media (max-width: 768px) {
   body { display: flex; }
   .sidebar { 
     position: fixed; 
     width: 30vw; 
     min-width: 110px;
-    padding: 16px 8px; 
+    padding: 16px 6px; 
     background-color: transparent; 
   }
-  .avatar-wrapper { width: 36px; height: 36px; margin-bottom: 12px; }
-  .channel-name { font-size: 13px; }
+  .avatar-wrapper { width: 32px; height: 32px; margin-bottom: 10px; }
+  .channel-name { font-size: 12px; }
   .channel-bio, .channel-handle { display: none; }
-  .section-label { font-size: 9px; margin-bottom: 6px; }
-  .nav-btn span { display: inline; font-size: 11px; } 
-  .nav-btn { padding: 8px 6px; }
+  .section-label { font-size: 8px; margin-bottom: 4px; }
+  .nav-btn span { display: inline; font-size: 10px; } 
+  .nav-btn { padding: 6px 4px; }
   .icon-badge { width: 16px; height: 16px; }
   
   .main-content { 
-    margin: 12px 12px 12px 30vw; 
+    margin: 8px 8px 8px 30vw; 
     margin-left: max(30vw, 110px);
-    width: calc(70vw - 24px); 
-    padding: 20px 16px; 
-    border-radius: 20px; 
-    background-color: var(--bg-surface); /* #353b43 */
+    width: calc(70vw - 16px); 
+    padding: 16px 12px; 
+    border-radius: 16px; 
+    background-color: var(--bg-surface); 
+    overflow: hidden; /* CRITICAL: Clips cards inside the rounded mobile panel */
   }
+
+  .video-grid { 
+    grid-template-columns: minmax(0, 1fr); /* Forces cards to stay inside mobile container */
+    gap: 16px; 
+  }
+
+  .video-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .controls { width: 100%; justify-content: space-between; gap: 8px; }
   .search-input, .custom-select-wrapper { width: 100% !important; }
 }
