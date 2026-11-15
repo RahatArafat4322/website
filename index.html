@@ -6,7 +6,6 @@
   <meta name="description" content="Nextcircuit Official Creator Hub - Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
   <meta name="theme-color" content="#05080e" />
   
-  <!-- Open Graph / Social Media SEO Tags -->
   <meta property="og:title" content="Nextcircuit | Official Creator Hub" />
   <meta property="og:description" content="Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
   <meta property="og:image" content="image_499882.png" />
@@ -25,8 +24,9 @@
 </head>
 <body>
 
-  <div id="toastBanner" role="alert" aria-live="assertive" class="fixed bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 w-[90%] sm:w-auto z-50 hidden bg-[#0d1421] border border-[rgba(0,240,255,0.45)] text-slate-100 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium backdrop-blur-md text-center sm:text-left transition-opacity duration-300"></div>
+  <div id="toastBanner" role="alert" class="fixed bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:left-auto sm:right-6 w-[90%] sm:w-auto z-50 hidden bg-[#0d1421] border border-[rgba(0,240,255,0.45)] text-slate-100 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium backdrop-blur-md text-center sm:text-left transition-opacity duration-300"></div>
 
+  <!-- Left Sidebar Navigation -->
   <nav class="sidebar" aria-label="Main Navigation">
     <header class="profile-box">
       <div class="avatar-wrapper">
@@ -39,124 +39,149 @@
       </p>
     </header>
 
-    <section class="sidebar-section" aria-labelledby="social-heading">
-      <h3 id="social-heading" class="section-label">Official Channels</h3>
+    <section class="sidebar-section">
+      <h3 class="section-label">Creator Content</h3>
       <div class="social-links">
-        <a href="https://youtube.com/@next_circuit" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Visit YouTube Channel">
+        <button class="social-btn nav-btn active" onclick="CreatorHub.switchTab('youtube')" id="nav-youtube">
           <div class="social-btn-left">
-            <span class="icon-badge yt-badge" aria-hidden="true">▶</span>
-            <span class="truncate">YouTube Channel</span>
+            <img src="image_1d84bc.jpg" alt="YouTube" class="icon-badge" style="object-fit: cover; border-radius: 6px;" />
+            <span class="truncate">YouTube Videos</span>
           </div>
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a href="https://github.com/RahatArafat4322" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Visit GitHub Profile">
+        </button>
+        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('github')" id="nav-github">
           <div class="social-btn-left">
-            <span class="icon-badge gh-badge" aria-hidden="true">GH</span>
-            <span class="truncate">GitHub (RahatArafat4322)</span>
+            <img src="image_1d8447.png" alt="GitHub" class="icon-badge bg-white p-[2px]" style="object-fit: contain; border-radius: 6px;" />
+            <span class="truncate">GitHub Repositories</span>
           </div>
-          <span aria-hidden="true">↗</span>
-        </a>
+        </button>
       </div>
     </section>
 
-    <section class="sidebar-section" aria-labelledby="software-heading">
-      <h3 id="software-heading" class="section-label">Software &amp; Apps</h3>
-      <div class="accordion-group">
-        <article class="accordion-item" id="acc-windows">
-          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="list-windows" onclick="CreatorHub.toggleAccordion('acc-windows')">
-            <div class="social-btn-left">
-              <span class="icon-badge win-badge" aria-hidden="true">WIN</span>
-              <span>Windows</span>
-            </div>
-            <span class="accordion-chevron" aria-hidden="true">▼</span>
-          </button>
-          <div class="accordion-panel" id="list-windows" role="region"></div>
-        </article>
-
-        <article class="accordion-item" id="acc-linux">
-          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="list-linux" onclick="CreatorHub.toggleAccordion('acc-linux')">
-            <div class="social-btn-left">
-              <span class="icon-badge lin-badge" aria-hidden="true">LNX</span>
-              <span>Linux</span>
-            </div>
-            <span class="accordion-chevron" aria-hidden="true">▼</span>
-          </button>
-          <div class="accordion-panel" id="list-linux" role="region"></div>
-        </article>
-
-        <article class="accordion-item" id="acc-android">
-          <button type="button" class="accordion-header" aria-expanded="false" aria-controls="list-android" onclick="CreatorHub.toggleAccordion('acc-android')">
-            <div class="social-btn-left">
-              <span class="icon-badge and-badge" aria-hidden="true">APK</span>
-              <span>Android</span>
-            </div>
-            <span class="accordion-chevron" aria-hidden="true">▼</span>
-          </button>
-          <div class="accordion-panel" id="list-android" role="region"></div>
-        </article>
+    <section class="sidebar-section">
+      <h3 class="section-label">Software &amp; Drive Links</h3>
+      <div class="social-links">
+        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('windows')" id="nav-windows">
+          <div class="social-btn-left">
+            <img src="image_1d88e0.png" alt="Windows" class="icon-badge" style="object-fit: cover; border-radius: 6px;" />
+            <span>Windows Software</span>
+          </div>
+        </button>
+        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('linux')" id="nav-linux">
+          <div class="social-btn-left">
+            <img src="linux-logo-blue-square-26451_128.png" alt="Linux" class="icon-badge" style="object-fit: contain; border-radius: 6px;" />
+            <span>Linux Software</span>
+          </div>
+        </button>
+        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('android')" id="nav-android">
+          <div class="social-btn-left">
+            <img src="image_1d84ff.png" alt="Android" class="icon-badge p-[2px]" style="object-fit: contain; border-radius: 6px;" />
+            <span>Android Apps</span>
+          </div>
+        </button>
       </div>
     </section>
 
     <footer class="admin-sidebar-footer">
-      <button type="button" class="admin-trigger" onclick="CreatorHub.openAdminModal()" aria-label="Open Creator Admin Studio">
-        ⚡ Creator Admin Studio
-      </button>
+      <button type="button" class="admin-trigger" onclick="CreatorHub.openAdminModal()">⚡ Creator Admin Studio</button>
     </footer>
   </nav>
 
+  <!-- Main Content Area -->
   <main class="main-content">
-    <header class="top-bar">
-      <div class="page-title">
-        <h1>Channel Videos</h1>
-        <p>Live uploads automatically synced from YouTube (@next_circuit)</p>
-      </div>
-      <div class="controls">
-        <span class="sync-status" id="syncBadge" aria-live="polite">● Awaiting Channel Sync</span>
-        
-        <!-- Live Search Bar -->
-        <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="CreatorHub.handleSearch()" class="search-input" aria-label="Search videos">
-        
-        <!-- Custom Sort Dropdown -->
-        <div class="custom-select-wrapper" style="width: 220px;">
-          <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0" onkeypress="if(event.key==='Enter') CreatorHub.toggleSortSelect()">
-            <span id="sortModeDisplay">Sort: Most Viewed First</span>
-            <span style="font-size: 10px; color: var(--text-secondary);">▼</span>
-          </div>
-          <div class="custom-options hidden" id="sortModeOptions">
-            <div class="custom-option" onclick="CreatorHub.selectSort('views', 'Sort: Most Viewed First')">Sort: Most Viewed First</div>
-            <div class="custom-option" onclick="CreatorHub.selectSort('newest', 'Sort: Newest Uploads First')">Sort: Newest Uploads First</div>
-          </div>
-          <input type="hidden" id="sortMode" value="views">
+    
+    <!-- YOUTUBE TAB VIEW -->
+    <div id="tab-youtube" class="view-section active">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>Channel Videos</h1>
+          <p>Live uploads automatically synced from YouTube (@next_circuit)</p>
         </div>
-      </div>
-    </header>
+        <div class="controls">
+          <span class="sync-status" id="syncBadge">● Awaiting Sync</span>
+          <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="CreatorHub.handleSearch()" class="search-input">
+          <div class="custom-select-wrapper" style="width: 220px;">
+            <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0">
+              <span id="sortModeDisplay">Sort: Most Viewed First</span>
+              <span style="font-size: 10px; color: var(--text-secondary);">▼</span>
+            </div>
+            <div class="custom-options hidden" id="sortModeOptions">
+              <div class="custom-option" onclick="CreatorHub.selectSort('views', 'Sort: Most Viewed First')">Sort: Most Viewed First</div>
+              <div class="custom-option" onclick="CreatorHub.selectSort('newest', 'Sort: Newest Uploads First')">Sort: Newest Uploads First</div>
+            </div>
+            <input type="hidden" id="sortMode" value="views">
+          </div>
+        </div>
+      </header>
+      <section class="video-grid" id="videoGrid"></section>
+    </div>
 
-    <section class="video-grid" id="videoGrid" aria-label="Video Library"></section>
+    <!-- GITHUB TAB VIEW -->
+    <div id="tab-github" class="view-section">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>GitHub Repositories</h1>
+          <p>Live codebase synced directly from GitHub (@RahatArafat4322)</p>
+        </div>
+      </header>
+      <section class="video-grid" id="githubGrid">
+        <!-- Repos will inject here -->
+      </section>
+    </div>
+
+    <!-- SOFTWARE TAB VIEWS (Replaces Accordions) -->
+    <div id="tab-windows" class="view-section">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>Windows Software</h1>
+          <p>Secure Google Drive download links for Windows environments.</p>
+        </div>
+      </header>
+      <section class="software-grid" id="grid-windows"></section>
+    </div>
+
+    <div id="tab-linux" class="view-section">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>Linux Software</h1>
+          <p>Secure Google Drive download links for Linux environments.</p>
+        </div>
+      </header>
+      <section class="software-grid" id="grid-linux"></section>
+    </div>
+
+    <div id="tab-android" class="view-section">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>Android Apps</h1>
+          <p>Secure Google Drive download links for Android APKs.</p>
+        </div>
+      </header>
+      <section class="software-grid" id="grid-android"></section>
+    </div>
+
   </main>
 
   <!-- Video Player Modal -->
-  <div class="modal-overlay" id="playerModal" onclick="CreatorHub.closePlayer()" role="dialog" aria-modal="true" aria-labelledby="playerTitle">
+  <div class="modal-overlay" id="playerModal" onclick="CreatorHub.closePlayer()">
     <div class="player-modal" onclick="event.stopPropagation()">
       <header class="player-header">
         <strong id="playerTitle" class="truncate text-sm sm:text-base">Now Playing</strong>
-        <button type="button" class="close-btn" onclick="CreatorHub.closePlayer()" aria-label="Close Video Player">✕ Close</button>
+        <button type="button" class="close-btn" onclick="CreatorHub.closePlayer()">✕ Close</button>
       </header>
       <div class="iframe-wrap">
-        <iframe id="youtubeIframe" src="" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="youtubeIframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
   </div>
 
   <!-- Creator Admin Studio -->
-  <div class="modal-overlay" id="adminModal" onclick="CreatorHub.closeAdminModal()" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+  <div class="modal-overlay" id="adminModal" onclick="CreatorHub.closeAdminModal()">
     <div class="admin-modal" onclick="event.stopPropagation()">
       <header class="flex justify-between items-center mb-2">
         <h2 id="adminTitle">Creator Admin Studio</h2>
-        <button type="button" class="close-btn" onclick="CreatorHub.closeAdminModal()" aria-label="Close Admin Studio">✕ Close</button>
+        <button type="button" class="close-btn" onclick="CreatorHub.closeAdminModal()">✕ Close</button>
       </header>
-      <p class="text-xs text-slate-400 mb-4">Hidden from normal visitors. Manage your GitHub software database and YouTube auto-sync below.</p>
-
-      <nav class="admin-tabs" aria-label="Admin settings tabs">
+      <nav class="admin-tabs">
         <button type="button" class="tab-btn active" id="tabBtnSoftware" onclick="CreatorHub.switchAdminTab('software')">1. Software &amp; Apps</button>
         <button type="button" class="tab-btn" id="tabBtnSync" onclick="CreatorHub.switchAdminTab('sync')">2. Logo &amp; Sync</button>
       </nav>
@@ -166,7 +191,7 @@
           <div class="sm:col-span-3">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Platform</label>
             <div class="custom-select-wrapper">
-              <div class="custom-select" onclick="CreatorHub.toggleCustomSelect()" tabindex="0" onkeypress="if(event.key==='Enter') CreatorHub.toggleCustomSelect()">
+              <div class="custom-select" onclick="CreatorHub.toggleCustomSelect()">
                 <span id="swPlatformDisplay">Windows</span>
                 <span style="font-size: 10px; color: var(--text-secondary);">▼</span>
               </div>
@@ -179,66 +204,56 @@
             </div>
           </div>
           <div class="sm:col-span-4">
-            <label for="swName" class="block text-xs font-semibold text-slate-400 mb-1">Software Name</label>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Software Name</label>
             <input type="text" id="swName" placeholder="e.g. STM32CubeIDE" required class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
           </div>
           <div class="sm:col-span-5">
-            <label for="swDriveUrl" class="block text-xs font-semibold text-slate-400 mb-1">Secure Drive Link</label>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Secure Drive Link</label>
             <input type="url" id="swDriveUrl" placeholder="https://drive.google.com/..." required class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
           </div>
           <div class="sm:col-span-12 flex justify-end mt-1">
             <button type="submit" class="btn-primary">+ Add Item</button>
           </div>
         </form>
-
         <div class="space-y-3 mb-5 max-h-56 overflow-y-auto pr-1" id="adminSoftwareManagerList"></div>
-
         <div class="bg-[#05080e] p-4 rounded-xl border border-[rgba(0,240,255,0.25)]">
           <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">GitHub Auto-Update (software.json)</span>
+            <span class="text-xs font-bold text-cyan-400">GITHUB AUTO-UPDATE</span>
             <div class="flex gap-2">
-              <button type="button" class="btn-secondary text-xs py-1.5 px-3" onclick="CreatorHub.copySoftwareJson()">Copy JSON</button>
               <button type="button" class="btn-primary text-xs py-1.5 px-3" onclick="CreatorHub.downloadSoftwareJson()">Download JSON</button>
             </div>
           </div>
-          <p class="text-xs text-slate-400 mb-2">Upload this file to your GitHub repository (<code class="text-cyan-300">RahatArafat4322/nextcircuit-data</code>) to push live updates securely.</p>
-          <textarea id="softwareJsonPreview" readonly aria-label="JSON Output Preview" rows="5" class="w-full bg-[#090d16] text-cyan-300 font-mono text-xs p-3 rounded-lg border border-slate-800 focus:outline-none"></textarea>
+          <p class="text-xs text-slate-400 mb-2">Upload to GitHub (<code class="text-cyan-300">RahatArafat4322/nextcircuit-data</code>) to push live updates.</p>
+          <textarea id="softwareJsonPreview" readonly rows="4" class="w-full bg-[#090d16] text-cyan-300 font-mono text-xs p-3 rounded-lg border border-slate-800 outline-none"></textarea>
         </div>
       </div>
 
       <div id="adminTabSync" class="hidden">
         <div class="form-group">
-          <label for="inputName">Channel Name</label>
+          <label>Channel Name</label>
           <input type="text" id="inputName" value="Nextcircuit" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
         </div>
         <div class="form-group">
-          <label for="inputLogo">Custom Logo Image (Paste URL or Upload Image File)</label>
-          <div class="flex flex-col sm:flex-row gap-2">
-            <input type="text" id="inputLogo" placeholder="https://... (or choose file on right)" class="flex-1 bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
-            <label class="btn-secondary text-xs flex items-center justify-center cursor-pointer whitespace-nowrap p-2">
-              📁 Upload Logo
-              <input type="file" id="inputLogoFile" accept="image/*" class="hidden" onchange="CreatorHub.handleLogoFileUpload(event)" />
-            </label>
-          </div>
+          <label>Custom Logo Image URL</label>
+          <input type="text" id="inputLogo" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
         </div>
         <div class="form-group">
-          <label for="inputGithubJsonUrl">Raw GitHub URL for software.json</label>
-          <input type="url" id="inputGithubJsonUrl" placeholder="https://raw.githubusercontent.com/RahatArafat4322/..." class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+          <label>Raw GitHub URL (software.json)</label>
+          <input type="url" id="inputGithubJsonUrl" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
         </div>
         <div class="form-group">
-          <label for="inputChannelId">YouTube Channel ID (Starts with UC...)</label>
-          <input type="text" id="inputChannelId" placeholder="e.g. UCxxxxxxxxxxxxxxxxxxxxxx" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+          <label>YouTube Channel ID</label>
+          <input type="text" id="inputChannelId" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
         </div>
         <div class="form-group">
-          <label for="inputApiKey">YouTube Data API v3 Key (Optional)</label>
-          <input type="password" id="inputApiKey" placeholder="Paste Google Cloud YouTube API Key" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
+          <label>YouTube API Key</label>
+          <input type="password" id="inputApiKey" class="w-full bg-[#05080e] border border-slate-700 rounded-lg text-white p-2.5" />
         </div>
-
-        <div class="flex flex-wrap gap-3 mt-6">
-          <button type="button" class="btn-primary flex-1 min-w-[150px]" onclick="CreatorHub.saveAdminSettings()">Save &amp; Sync All</button>
+        <div class="flex gap-3 mt-6">
+          <button type="button" class="btn-primary flex-1" onclick="CreatorHub.saveAdminSettings()">Save Locally</button>
           <button type="button" class="btn-secondary w-full" onclick="CreatorHub.lockAdminMode()">Lock Admin Mode</button>
         </div>
-        <p class="text-xs text-slate-400 w-full text-center mt-4">To update API keys, Channel ID, or Logo permanently, edit the DEFAULT_CONFIG in your script.js file on GitHub.</p>
+        <p class="text-xs text-slate-400 w-full text-center mt-4">To update API keys or Logo permanently, edit DEFAULT_CONFIG in script.js on GitHub.</p>
       </div>
     </div>
   </div>
