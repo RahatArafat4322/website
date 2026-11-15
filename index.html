@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Nextcircuit Official Creator Hub - Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects." />
-  <meta name="theme-color" content="#05080e" />
+  <meta name="theme-color" content="#000000" />
   
-  <!-- Strict Security Headers to Block Hackers -->
+  <!-- Strict Security Headers -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://*.googleusercontent.com; frame-src https://www.youtube.com; connect-src 'self' https://api.github.com https://www.googleapis.com;" />
@@ -22,7 +22,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
@@ -47,13 +47,13 @@
       <div class="social-links">
         <button class="social-btn nav-btn active" onclick="CreatorHub.switchTab('youtube')" id="nav-youtube">
           <div class="social-btn-left">
-            <img src="youtube.jpg" alt="YouTube" class="icon-badge" style="object-fit: cover; border-radius: 6px;" />
+            <img src="youtube.jpg" alt="YouTube" class="icon-badge" style="object-fit: cover; border-radius: 4px;" />
             <span class="truncate">YouTube Videos</span>
           </div>
         </button>
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('github')" id="nav-github">
           <div class="social-btn-left">
-            <img src="github.png" alt="GitHub" class="icon-badge bg-white p-[2px]" style="object-fit: contain; border-radius: 6px;" />
+            <img src="github.png" alt="GitHub" class="icon-badge p-[3px] bg-white" style="object-fit: contain; border-radius: 4px;" />
             <span class="truncate">GitHub Repositories</span>
           </div>
         </button>
@@ -61,23 +61,23 @@
     </section>
 
     <section class="sidebar-section">
-      <h3 class="section-label">Software &amp; Drive Links</h3>
+      <h3 class="section-label">Software Links</h3>
       <div class="social-links">
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('windows')" id="nav-windows">
           <div class="social-btn-left">
-            <img src="windows.png" alt="Windows" class="icon-badge" style="object-fit: cover; border-radius: 6px;" />
+            <img src="windows.png" alt="Windows" class="icon-badge" style="object-fit: cover; border-radius: 4px;" />
             <span>Windows Software</span>
           </div>
         </button>
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('linux')" id="nav-linux">
           <div class="social-btn-left">
-            <img src="linux.png" alt="Linux" class="icon-badge" style="object-fit: contain; border-radius: 6px;" />
+            <img src="linux.png" alt="Linux" class="icon-badge" style="object-fit: contain; border-radius: 4px;" />
             <span>Linux Software</span>
           </div>
         </button>
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('android')" id="nav-android">
           <div class="social-btn-left">
-            <img src="android.png" alt="Android" class="icon-badge p-[2px]" style="object-fit: contain; border-radius: 6px;" />
+            <img src="android.png" alt="Android" class="icon-badge p-[3px]" style="object-fit: contain; border-radius: 4px;" />
             <span>Android Apps</span>
           </div>
         </button>
@@ -100,12 +100,12 @@
           <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="CreatorHub.handleSearch()" class="search-input">
           <div class="custom-select-wrapper" style="width: 220px;">
             <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0">
-              <span id="sortModeDisplay">Sort: Most Viewed First</span>
-              <span style="font-size: 10px; color: var(--text-secondary);">▼</span>
+              <span id="sortModeDisplay">Sort: Most Viewed</span>
+              <span style="font-size: 10px; color: var(--text-muted);">▼</span>
             </div>
             <div class="custom-options hidden" id="sortModeOptions">
-              <div class="custom-option" onclick="CreatorHub.selectSort('views', 'Sort: Most Viewed First')">Sort: Most Viewed First</div>
-              <div class="custom-option" onclick="CreatorHub.selectSort('newest', 'Sort: Newest Uploads First')">Sort: Newest Uploads First</div>
+              <div class="custom-option" onclick="CreatorHub.selectSort('views', 'Sort: Most Viewed')">Sort: Most Viewed</div>
+              <div class="custom-option" onclick="CreatorHub.selectSort('newest', 'Sort: Newest First')">Sort: Newest First</div>
             </div>
             <input type="hidden" id="sortMode" value="views">
           </div>
@@ -118,7 +118,7 @@
     <div id="tab-github" class="view-section">
       <header class="top-bar">
         <div class="page-title">
-          <h1>GitHub Repositories</h1>
+          <h1>Repositories</h1>
           <p>Live codebase synced securely from software.json</p>
         </div>
       </header>
@@ -133,7 +133,7 @@
           <p>Secure Google Drive download links for Windows environments.</p>
         </div>
       </header>
-      <section class="software-grid" id="grid-windows"></section>
+      <section class="video-grid" id="grid-windows"></section>
     </div>
 
     <div id="tab-linux" class="view-section">
@@ -143,7 +143,7 @@
           <p>Secure Google Drive download links for Linux environments.</p>
         </div>
       </header>
-      <section class="software-grid" id="grid-linux"></section>
+      <section class="video-grid" id="grid-linux"></section>
     </div>
 
     <div id="tab-android" class="view-section">
@@ -153,7 +153,7 @@
           <p>Secure Google Drive download links for Android APKs.</p>
         </div>
       </header>
-      <section class="software-grid" id="grid-android"></section>
+      <section class="video-grid" id="grid-android"></section>
     </div>
   </main>
 
@@ -161,7 +161,7 @@
   <div class="modal-overlay" id="playerModal" onclick="CreatorHub.closePlayer()">
     <div class="player-modal" onclick="event.stopPropagation()">
       <header class="player-header">
-        <strong id="playerTitle" class="truncate text-sm sm:text-base">Now Playing</strong>
+        <strong id="playerTitle" class="truncate text-sm sm:text-base font-medium">Now Playing</strong>
         <button type="button" class="close-btn" onclick="CreatorHub.closePlayer()">✕ Close</button>
       </header>
       <div class="iframe-wrap">
