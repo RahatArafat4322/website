@@ -1,6 +1,7 @@
 :root {
-  --bg-canvas: #282c32; /* Covers the rest of the layout and background */
-  --bg-surface: #353b43; /* Covers inside the right-side rounded panel */
+  --sidebar-width: 280px; /* Normal desktop sidebar width */
+  --bg-canvas: #282c32;   /* Background and rest of the canvas */
+  --bg-surface: #353b43;  /* Inside the right-side rounded panel */
   --bg-card: rgba(20, 24, 30, 0.6);
   --bg-card-hover: rgba(30, 36, 45, 0.8);
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -15,7 +16,7 @@
 
 body { 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-  background-color: var(--bg-canvas); /* Set to #282c32 */
+  background-color: var(--bg-canvas); /* #282c32 */
   color: var(--text-primary); 
   display: flex; 
   min-height: 100vh; 
@@ -29,11 +30,9 @@ body {
 ::-webkit-scrollbar-thumb { background: #4e5563; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
-/* Sidebar - Exactly 30% width layout */
+/* Desktop Sidebar (Normal full experience) */
 .sidebar { 
-  width: 30vw; 
-  min-width: 250px;
-  max-width: 380px;
+  width: var(--sidebar-width); 
   position: fixed; 
   top: 0; left: 0; bottom: 0; 
   display: flex; 
@@ -62,14 +61,14 @@ body {
 .icon-badge { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 a.nav-btn .social-btn-left { pointer-events: auto; }
 
-/* Main Content Area - Exactly 70% width layout with rounded floating box set to #353b43 */
+/* Desktop Main Content Area (Normal full experience with #353b43) */
 .main-content { 
-  margin: 16px 16px 16px 30vw; 
-  margin-left: max(30vw, 250px);
+  margin: 16px 16px 16px var(--sidebar-width); 
   flex: 1; 
   padding: 44px 56px; 
-  width: calc(70vw - 32px); 
-  background-color: var(--bg-surface); /* Set to #353b43 */
+  max-width: 1600px; 
+  width: calc(100% - var(--sidebar-width) - 32px); 
+  background-color: var(--bg-surface); /* #353b43 */
   border-radius: 24px; 
   border: 1px solid var(--border-subtle); 
   min-height: calc(100vh - 32px); 
@@ -159,28 +158,32 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
 .custom-option { padding: 10px 14px; cursor: pointer; font-size: 13px; font-weight: 400; color: var(--text-secondary); }
 .custom-option:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
 
-/* MOBILE RESPONSIVE LAYOUT */
+/* MOBILE RESPONSIVE LAYOUT (Applies the 30% / 70% Rule strictly for mobile users) */
 @media (max-width: 768px) {
-  body { display: block; }
+  body { display: flex; }
   .sidebar { 
-    position: relative; 
-    width: 100%; 
-    max-width: none;
-    padding: 24px 20px; 
-    background-color: var(--bg-canvas); 
+    position: fixed; 
+    width: 30vw; 
+    min-width: 110px;
+    padding: 16px 8px; 
+    background-color: transparent; 
   }
-  .channel-bio, .channel-handle { display: block; }
-  .channel-name { display: block; font-size: 18px; }
-  .section-label { display: block; }
-  .nav-btn span { display: inline; } 
-  .nav-btn { justify-content: flex-start; padding: 10px 12px; font-size: 14px; }
+  .avatar-wrapper { width: 36px; height: 36px; margin-bottom: 12px; }
+  .channel-name { font-size: 13px; }
+  .channel-bio, .channel-handle { display: none; }
+  .section-label { font-size: 9px; margin-bottom: 6px; }
+  .nav-btn span { display: inline; font-size: 11px; } 
+  .nav-btn { padding: 8px 6px; }
+  .icon-badge { width: 16px; height: 16px; }
   
   .main-content { 
-    margin: 16px; 
-    width: calc(100% - 32px); 
-    padding: 24px 20px; 
+    margin: 12px 12px 12px 30vw; 
+    margin-left: max(30vw, 110px);
+    width: calc(70vw - 24px); 
+    padding: 20px 16px; 
     border-radius: 20px; 
+    background-color: var(--bg-surface); /* #353b43 */
   }
-  .controls { width: 100%; justify-content: space-between; gap: 12px; }
+  .controls { width: 100%; justify-content: space-between; gap: 8px; }
   .search-input, .custom-select-wrapper { width: 100% !important; }
 }
