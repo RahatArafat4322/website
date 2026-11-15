@@ -54,7 +54,8 @@ const CreatorHub = (() => {
   };
 
   const switchTab = (tabId) => {
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    // Only target nav buttons that are part of the tab system (not external social links)
+    document.querySelectorAll('button.nav-btn').forEach(btn => btn.classList.remove('active'));
     const navBtn = document.getElementById(`nav-${escapeHTML(tabId)}`);
     if (navBtn) navBtn.classList.add('active');
 
