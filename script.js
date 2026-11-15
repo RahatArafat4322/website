@@ -3,7 +3,6 @@
 const CreatorHub = (() => {
   const DEFAULT_LOGO_SVG = `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="9" y="9" width="18" height="18" rx="4" stroke="#00f0ff" stroke-width="2.2"/><path d="M14 22V14L22 22V14" stroke="#f8fafc" stroke-width="2.2" stroke-linecap="round"/><path d="M13 4V9M23 4V9M13 27V32M23 27V32M4 13H9M4 23H9M27 13H32M27 23H32" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/></svg>`;
 
-  // SECURITY: Hardcoded config that cannot be changed by malicious visitors
   const DEFAULT_CONFIG = {
     channelName: "Nextcircuit",
     logoUrl: "image_499882.png",
@@ -26,19 +25,15 @@ const CreatorHub = (() => {
     localStorage.setItem("nextcircuit_v3_config", JSON.stringify(config));
   }
 
-  // SECURITY: Freezes config object so it cannot be hijacked via developer console
   Object.freeze(DEFAULT_CONFIG);
-
   let searchQuery = "";
 
-  // SECURITY: XSS Sanitization for all links injected from JSON
   const sanitizeUrl = (url) => {
     const trimmed = String(url).trim();
     if (/^(javascript:|vbscript:|data:text\/html)/i.test(trimmed)) return "#";
     return trimmed;
   };
 
-  // SECURITY: HTML entity escaping to prevent code injection
   const escapeHTML = (str) => {
     if (!str) return "";
     return String(str).replace(/[&<>"'`=\/]/g, s => ({
@@ -93,7 +88,7 @@ const CreatorHub = (() => {
     }
 
     grid.innerHTML = repos.map((repo, idx) => `
-      <a href="${sanitizeUrl(repo.url)}" target="_blank" rel="noopener noreferrer" class="video-card" style="text-decoration: none; padding: 20px; display: flex; flex-direction: column; gap: 10px; animation-delay: ${idx * 0.05}s;">
+      <a href="${sanitizeUrl(repo.url)}" target="_blank" rel="noopener noreferrer" class="video-card" style="padding: 20px; display: flex; flex-direction: column; gap: 10px; animation-delay: ${idx * 0.05}s;">
         <h4 class="video-title" style="color: var(--accent-cyan); font-size: 16px;">
           <svg style="display:inline; width:16px; margin-right:6px;" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
           ${escapeHTML(repo.name)}
@@ -116,20 +111,22 @@ const CreatorHub = (() => {
       return;
     }
 
+    // Now uses the exact same Animated Video Card class as GitHub
     grid.innerHTML = items.map((item, idx) => `
-      <div class="software-card" style="animation-delay: ${idx * 0.05}s;">
-        <h4 class="software-name">${escapeHTML(item.name)}</h4>
-        <a href="${sanitizeUrl(item.driveUrl)}" target="_blank" rel="noopener noreferrer" class="drive-btn">
-          <svg style="width:16px; margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          Download from Secure Drive
-        </a>
-      </div>
+      <a href="${sanitizeUrl(item.driveUrl)}" target="_blank" rel="noopener noreferrer" class="video-card" style="padding: 20px; display: flex; flex-direction: column; gap: 10px; animation-delay: ${idx * 0.05}s;">
+        <h4 class="video-title" style="color: var(--accent-cyan); font-size: 16px;">
+          <svg style="display:inline; width:16px; margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          ${escapeHTML(item.name)}
+        </h4>
+        <div class="video-stats" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+          <span style="color: var(--text-muted);">Secure Drive Download ↗</span>
+        </div>
+      </a>
     `).join("");
   };
 
   const syncGitHubSoftware = async () => {
     try {
-      // Secure local fetching constraint
       const res = await fetch(`software.json?t=${Date.now()}`, { 
         method: 'GET', 
         mode: 'same-origin', 
@@ -242,7 +239,6 @@ const CreatorHub = (() => {
 
     try {
       if (config.apiKey && config.channelId) {
-        // Secure credential stripping for external API calls
         const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${encodeURIComponent(config.apiKey)}&channelId=${encodeURIComponent(config.channelId)}&part=snippet,id&order=date&maxResults=30&type=video`, {
           method: 'GET',
           mode: 'cors',
