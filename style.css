@@ -50,7 +50,17 @@ body {
 .icon-badge { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
 
 /* Main Content Area */
-.main-content { margin-left: var(--sidebar-width); flex: 1; padding: 48px 64px; max-width: 1600px; width: calc(100% - var(--sidebar-width)); background: var(--bg-main); min-height: 100vh; }
+.main-content { 
+  margin: 16px 16px 16px calc(var(--sidebar-width) + 16px); 
+  flex: 1; 
+  padding: 44px 56px; 
+  max-width: 1600px; 
+  width: calc(100% - var(--sidebar-width) - 32px); 
+  background: var(--bg-sidebar); 
+  border-radius: 24px; 
+  border: 1px solid var(--border-subtle); 
+  min-height: calc(100vh - 32px); 
+}
 .view-section { display: none; }
 .view-section.active { display: block; animation: smoothFadeIn 0.4s ease forwards; }
 
