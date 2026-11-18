@@ -4,38 +4,51 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Nextcircuit Official Creator Hub" />
-  <meta name="theme-color" content="#282c32" />
-  
+  <meta name="theme-color" content="#1e2229" />
+
   <!-- Strict Security Headers -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://*.googleusercontent.com; frame-src https://www.youtube.com; connect-src 'self' https://api.github.com https://www.googleapis.com;" />
-  
+
   <meta property="og:title" content="Nextcircuit | Official Creator Hub" />
   <meta property="og:image" content="image_499882.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  
+
   <title>Nextcircuit | Official Creator Hub</title>
-  
+
   <script src="https://cdn.tailwindcss.com" defer></script>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body>
+
+  <!-- Animated Cyber-Circuit Grid, Floating Aurora Orbs & Interactive Constellation Canvas -->
+  <div class="bg-grid-overlay" aria-hidden="true"></div>
+  <div class="ambient-orb ambient-orb-1" aria-hidden="true"></div>
+  <div class="ambient-orb ambient-orb-2" aria-hidden="true"></div>
+  <div class="ambient-orb ambient-orb-3" aria-hidden="true"></div>
+  <canvas id="bgParticles" aria-hidden="true"></canvas>
 
   <!-- Left Sidebar Navigation -->
   <nav class="sidebar" aria-label="Main Navigation">
     <header class="profile-box">
       <div class="avatar-wrapper">
         <div class="avatar" id="avatarContainer" aria-hidden="true"></div>
+        <span class="status-dot" title="Creator Hub Active" aria-hidden="true"></span>
       </div>
-      <h2 class="channel-name" id="displayChannelName">Nextcircuit</h2>
-      <div class="channel-handle">@next_circuit</div>
+      <h2 class="channel-name animated-gradient-text" id="displayChannelName">Nextcircuit</h2>
+      <div class="channel-handle">
+        <span class="handle-pulse">●</span> @next_circuit
+      </div>
+      <div class="typewriter-line" aria-live="polite">
+        <span id="typewriterText">Embedded Systems &amp; PCB Design</span><span class="typewriter-cursor">|</span>
+      </div>
       <p class="channel-bio">
         Embedded systems, STM32, ESP32, Arduino tutorials &amp; hardware engineering projects.
       </p>
@@ -47,13 +60,13 @@
         <button class="social-btn nav-btn active" onclick="CreatorHub.switchTab('youtube')" id="nav-youtube">
           <div class="social-btn-left">
             <img src="youtube.png" alt="YouTube" class="icon-badge" />
-            <span class="truncate">YouTube Videos</span>
+            <span class="nav-text truncate">YouTube Videos</span>
           </div>
         </button>
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('github')" id="nav-github">
           <div class="social-btn-left">
             <img src="github.png" alt="GitHub" class="icon-badge" />
-            <span class="truncate">GitHub Repositories</span>
+            <span class="nav-text truncate">GitHub Repositories</span>
           </div>
         </button>
       </div>
@@ -65,19 +78,19 @@
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('windows')" id="nav-windows">
           <div class="social-btn-left">
             <img src="windows.png" alt="Windows" class="icon-badge" />
-            <span>Windows Software</span>
+            <span class="nav-text">Windows Software</span>
           </div>
         </button>
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('linux')" id="nav-linux">
           <div class="social-btn-left">
             <img src="linux.png" alt="Linux" class="icon-badge" />
-            <span>Linux Software</span>
+            <span class="nav-text">Linux Software</span>
           </div>
         </button>
         <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('android')" id="nav-android">
           <div class="social-btn-left">
             <img src="android.png" alt="Android" class="icon-badge" />
-            <span>Android Apps</span>
+            <span class="nav-text">Android Apps</span>
           </div>
         </button>
       </div>
@@ -89,31 +102,31 @@
         <a href="https://youtube.com/@next_circuit" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
           <div class="social-btn-left">
             <img src="youtube.png" alt="YouTube" class="icon-badge" />
-            <span>YouTube</span>
+            <span class="nav-text">YouTube</span>
           </div>
         </a>
         <a href="https://github.com/RahatArafat4322" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
           <div class="social-btn-left">
             <img src="github.png" alt="GitHub" class="icon-badge" />
-            <span>GitHub</span>
+            <span class="nav-text">GitHub</span>
           </div>
         </a>
         <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
           <div class="social-btn-left">
             <img src="discord.png" alt="Discord" class="icon-badge" />
-            <span>Discord</span>
+            <span class="nav-text">Discord</span>
           </div>
         </a>
         <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
           <div class="social-btn-left">
             <img src="facebook.png" alt="Facebook" class="icon-badge" />
-            <span>Facebook</span>
+            <span class="nav-text">Facebook</span>
           </div>
         </a>
         <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
           <div class="social-btn-left">
             <img src="linkedin.png" alt="LinkedIn" class="icon-badge" />
-            <span>LinkedIn</span>
+            <span class="nav-text">LinkedIn</span>
           </div>
         </a>
       </div>
@@ -121,16 +134,17 @@
   </nav>
 
   <!-- Main Content Area -->
-  <main class="main-content">
-    
+  <main class="main-content" id="mainContent">
+
     <!-- YOUTUBE TAB VIEW -->
     <div id="tab-youtube" class="view-section active">
       <header class="top-bar">
         <div class="page-title">
-          <h1>Channel Videos</h1>
+          <h1 class="animated-title" data-text="Channel Videos">Channel Videos</h1>
+          <span class="count-badge" id="count-youtube">0</span>
         </div>
         <div class="controls">
-          <input type="text" id="searchInput" placeholder="Search videos..." onkeyup="CreatorHub.handleSearch()" class="search-input">
+          <input type="text" id="searchInput" placeholder="Search videos..." oninput="CreatorHub.handleSearch('youtube')" onkeyup="CreatorHub.handleSearch('youtube')" class="search-input">
           <div class="custom-select-wrapper" style="width: 200px;">
             <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0">
               <span id="sortModeDisplay">Sort: Most Viewed</span>
@@ -151,35 +165,53 @@
     <div id="tab-github" class="view-section">
       <header class="top-bar">
         <div class="page-title">
-          <h1>GitHub Repositories</h1>
+          <h1 class="animated-title" data-text="GitHub Repositories">GitHub Repositories</h1>
+          <span class="count-badge" id="count-github">0</span>
+        </div>
+        <div class="controls">
+          <input type="text" id="searchGithub" placeholder="Search repositories..." oninput="CreatorHub.handleSearch('github')" onkeyup="CreatorHub.handleSearch('github')" class="search-input">
         </div>
       </header>
       <section class="video-grid" id="githubGrid"></section>
     </div>
 
-    <!-- SOFTWARE TAB VIEWS -->
+    <!-- WINDOWS SOFTWARE TAB VIEW -->
     <div id="tab-windows" class="view-section">
       <header class="top-bar">
         <div class="page-title">
-          <h1>Windows Software</h1>
+          <h1 class="animated-title" data-text="Windows Software">Windows Software</h1>
+          <span class="count-badge" id="count-windows">0</span>
+        </div>
+        <div class="controls">
+          <input type="text" id="searchWindows" placeholder="Search Windows software..." oninput="CreatorHub.handleSearch('windows')" onkeyup="CreatorHub.handleSearch('windows')" class="search-input">
         </div>
       </header>
       <section class="video-grid" id="grid-windows"></section>
     </div>
 
+    <!-- LINUX SOFTWARE TAB VIEW -->
     <div id="tab-linux" class="view-section">
       <header class="top-bar">
         <div class="page-title">
-          <h1>Linux Software</h1>
+          <h1 class="animated-title" data-text="Linux Software">Linux Software</h1>
+          <span class="count-badge" id="count-linux">0</span>
+        </div>
+        <div class="controls">
+          <input type="text" id="searchLinux" placeholder="Search Linux software..." oninput="CreatorHub.handleSearch('linux')" onkeyup="CreatorHub.handleSearch('linux')" class="search-input">
         </div>
       </header>
       <section class="video-grid" id="grid-linux"></section>
     </div>
 
+    <!-- ANDROID APPS TAB VIEW -->
     <div id="tab-android" class="view-section">
       <header class="top-bar">
         <div class="page-title">
-          <h1>Android Apps</h1>
+          <h1 class="animated-title" data-text="Android Apps">Android Apps</h1>
+          <span class="count-badge" id="count-android">0</span>
+        </div>
+        <div class="controls">
+          <input type="text" id="searchAndroid" placeholder="Search Android apps..." oninput="CreatorHub.handleSearch('android')" onkeyup="CreatorHub.handleSearch('android')" class="search-input">
         </div>
       </header>
       <section class="video-grid" id="grid-android"></section>
