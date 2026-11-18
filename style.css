@@ -28,10 +28,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-canvas); }
-::-webkit-scrollbar-thumb { background: #4e5563; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+/* Hides the visual scrollbar so it never cuts across the rounded corners */
+::-webkit-scrollbar { width: 0px; height: 0px; display: none; }
 
 .sidebar { 
   width: var(--sidebar-width); 
@@ -42,6 +40,8 @@ body {
   padding: 32px 24px; 
   z-index: 40; 
   overflow-y: auto; 
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   background-color: transparent; 
   border-right: none; 
 }
@@ -79,6 +79,8 @@ a.nav-btn .social-btn-left { pointer-events: auto; }
   height: calc(100dvh - 32px); 
   overflow-y: auto; 
   overflow-x: hidden; 
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .view-section { display: none; }
 .view-section.active { display: block; animation: smoothFadeIn 0.4s ease forwards; }
