@@ -414,7 +414,7 @@ const CreatorHub = (() => {
 
         if (sorted.length === 0) {
             gridEl.innerHTML = `
-                <div style="grid-column: 1 / -1; padding: 60px 32px; background: rgba(0,0,0,0.2); border: 1px dashed var(--border-subtle); border-radius: 12px; text-align: center;">
+                <div style="grid-column: 1 / -1; padding: 60px 32px; background: rgba(0,0,0,0.35); border: 1px dashed var(--border-subtle); border-radius: 12px; text-align: center;">
                     <h3 style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">Waiting for Feed Sync</h3>
                     <p style="font-size: 13px; color: var(--text-secondary);">Videos will appear here securely once synced.</p>
                 </div>
@@ -543,7 +543,7 @@ const CreatorHub = (() => {
         renderVideos();
     };
 
-    // Interactive Circuit-Constellation + Shooting Data Pulses Background Canvas
+    // Interactive Circuit-Constellation + Shooting Data Pulses + Pulse Rings on Black Background
     const initParticles = () => {
         const canvas = document.getElementById("bgParticles");
         if (!canvas) return;
@@ -560,6 +560,18 @@ const CreatorHub = (() => {
             mouse.y = e.clientY;
         });
 
+        window.addEventListener("touchmove", (e) => {
+            if (e.touches && e.touches.length > 0) {
+                mouse.x = e.touches[0].clientX;
+                mouse.y = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        window.addEventListener("touchend", () => {
+            mouse.x = -9999;
+            mouse.y = -9999;
+        });
+
         window.addEventListener("mouseleave", () => {
             mouse.x = -9999;
             mouse.y = -9999;
@@ -571,29 +583,58 @@ const CreatorHub = (() => {
         });
 
         const palette = ["#22d3ee", "#818cf8", "#34d399"];
-        const count = Math.min(54, Math.max(28, Math.floor((width * height) / 25000)));
+        const count = Math.min(56, Math.max(30, Math.floor((width * height) / 24000)));
 
         const particles = Array.from({ length: count }, (_, i) => ({
             x: Math.random() * width,
             y: Math.random() * height,
-            r: Math.random() * 1.9 + 0.8,
-            vx: (Math.random() - 0.5) * 0.45,
-            vy: (Math.random() - 0.5) * 0.45,
+            r: Math.random() * 2 + 0.9,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
             color: palette[i % palette.length],
             pulse: Math.random() * Math.PI * 2
         }));
 
-        const pulses = Array.from({ length: 4 }, () => ({
+        const pulses = Array.from({ length: 5 }, () => ({
             x: Math.random() * width,
             y: Math.random() * height,
-            len: Math.random() * 70 + 50,
-            speed: Math.random() * 2.2 + 1.6,
+            len: Math.random() * 80 + 55,
+            speed: Math.random() * 2.4 + 1.8,
             horizontal: Math.random() > 0.5,
-            alpha: Math.random() * 0.25 + 0.12
+            alpha: Math.random() * 0.28 + 0.14
+        }));
+
+        const rings = Array.from({ length: 3 }, (_, idx) => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            r: idx * 35,
+            maxR: 110 + Math.random() * 60,
+            speed: 0.45 + Math.random() * 0.25,
+            color: palette[idx % palette.length]
         }));
 
         const animate = () => {
             ctx.clearRect(0, 0, width, height);
+
+            // Expanding signal rings
+            for (const ring of rings) {
+                ring.r += ring.speed;
+                if (ring.r > ring.maxR) {
+                    ring.r = 2;
+                    ring.x = Math.random() * width;
+                    ring.y = Math.random() * height;
+                }
+                const alpha = (1 - ring.r / ring.maxR) * 0.18;
+                ctx.beginPath();
+                ctx.arc(ring.x, ring.y, ring.r, 0, Math.PI * 2);
+                ctx.strokeStyle = ring.color === "#22d3ee"
+                    ? `rgba(34, 211, 238, ${alpha.toFixed(3)})`
+                    : ring.color === "#818cf8"
+                        ? `rgba(129, 140, 248, ${alpha.toFixed(3)})`
+                        : `rgba(52, 211, 153, ${alpha.toFixed(3)})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
 
             // Shooting circuit data pulses
             for (const beam of pulses) {
@@ -607,7 +648,7 @@ const CreatorHub = (() => {
                     grad.addColorStop(0, "rgba(34, 211, 238, 0)");
                     grad.addColorStop(1, `rgba(34, 211, 238, ${beam.alpha})`);
                     ctx.strokeStyle = grad;
-                    ctx.lineWidth = 1.4;
+                    ctx.lineWidth = 1.5;
                     ctx.beginPath();
                     ctx.moveTo(beam.x - beam.len, beam.y);
                     ctx.lineTo(beam.x, beam.y);
@@ -622,7 +663,7 @@ const CreatorHub = (() => {
                     grad.addColorStop(0, "rgba(129, 140, 248, 0)");
                     grad.addColorStop(1, `rgba(129, 140, 248, ${beam.alpha})`);
                     ctx.strokeStyle = grad;
-                    ctx.lineWidth = 1.4;
+                    ctx.lineWidth = 1.5;
                     ctx.beginPath();
                     ctx.moveTo(beam.x, beam.y - beam.len);
                     ctx.lineTo(beam.x, beam.y);
@@ -647,12 +688,12 @@ const CreatorHub = (() => {
                     ctx.beginPath();
                     ctx.moveTo(p.x, p.y);
                     ctx.lineTo(mouse.x, mouse.y);
-                    ctx.strokeStyle = `rgba(34, 211, 238, ${(force * 0.32).toFixed(3)})`;
+                    ctx.strokeStyle = `rgba(34, 211, 238, ${(force * 0.35).toFixed(3)})`;
                     ctx.lineWidth = 1;
                     ctx.stroke();
                 }
 
-                const radius = p.r + Math.sin(p.pulse) * 0.35;
+                const radius = p.r + Math.sin(p.pulse) * 0.4;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, Math.max(0.5, radius), 0, Math.PI * 2);
                 ctx.fillStyle = p.color;
@@ -661,8 +702,8 @@ const CreatorHub = (() => {
                 for (let j = i + 1; j < particles.length; j++) {
                     const p2 = particles[j];
                     const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (dist < 130) {
-                        const alpha = (1 - dist / 130) * 0.22;
+                    if (dist < 135) {
+                        const alpha = (1 - dist / 135) * 0.25;
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
