@@ -37,7 +37,6 @@ const CreatorHub = (() => {
         const trimmed = url.trim();
         if (!trimmed || /^(\/\/|javascript:|vbscript:|data:|file:|blob:)/i.test(trimmed)) return "#";
 
-        // Allow safe relative filenames (e.g. "image_499882.png")
         if (!trimmed.includes(":") && /^[a-zA-Z0-9_./-]+$/.test(trimmed)) {
             return trimmed;
         }
@@ -53,10 +52,8 @@ const CreatorHub = (() => {
         return "#";
     };
 
-    // SECURITY: Validate YouTube Video ID format
     const isValidVideoId = (id) => typeof id === "string" && /^[a-zA-Z0-9_-]{11}$/.test(id);
 
-    // SECURITY: HTML entity escaping
     const escapeHTML = (str) => {
         if (!str) return "";
         return String(str).replace(/[&<>"'`=\/]/g, s => ({
@@ -149,12 +146,9 @@ const CreatorHub = (() => {
         const badge = document.getElementById(`count-${tabId}`);
         if (!badge) return;
         badge.textContent = String(count);
-        badge.style.animation = "none";
-        void badge.offsetWidth;
-        badge.style.animation = "badgePop 0.45s var(--ease-spring) forwards, badgeBreathe 3s ease-in-out infinite";
     };
 
-    // Animated Heading Text Character Wave on Tab Switch
+    // Smooth Character Color-Wave on Tab Switch (no pop/scale)
     const animateSectionHeading = (tabId) => {
         const tabEl = document.getElementById(`tab-${tabId}`);
         if (!tabEl) return;
@@ -167,25 +161,15 @@ const CreatorHub = (() => {
         }).join("");
     };
 
-    // 3D Tilt & Mouse Spotlight Tracking on Cards (Desktop Pointer Only)
-    const attachCardTilt = (container) => {
+    // Mouse Spotlight Glow Tracking Only (No 3D Pop-Up/Tilt)
+    const attachCardSpotlight = (container) => {
         if (!container || window.matchMedia("(hover: none)").matches) return;
         const cards = container.querySelectorAll(".video-card");
         cards.forEach(card => {
             card.addEventListener("mousemove", (e) => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty("--mouse-x", `${x}px`);
-                card.style.setProperty("--mouse-y", `${y}px`);
-
-                const rotateY = ((x / rect.width) - 0.5) * 7;
-                const rotateX = (0.5 - (y / rect.height)) * 7;
-                card.style.transform = `perspective(900px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-7px) scale(1.015)`;
-            });
-
-            card.addEventListener("mouseleave", () => {
-                card.style.transform = "";
+                card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+                card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
             });
         });
     };
@@ -344,7 +328,7 @@ const CreatorHub = (() => {
 
         grid.innerHTML = repos.map((repo, idx) => {
             const href = sanitizeUrl(repo.url || repo.driveUrl);
-            const delay = Math.min(idx * 0.035, 0.55).toFixed(3);
+            const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
             return `
             <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="video-card" style="padding: 24px; animation-delay: ${delay}s;">
                 <h4 class="video-title" style="font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
@@ -358,7 +342,7 @@ const CreatorHub = (() => {
             `;
         }).join("");
 
-        attachCardTilt(grid);
+        attachCardSpotlight(grid);
     };
 
     const renderSoftwareGrid = (platform) => {
@@ -390,7 +374,7 @@ const CreatorHub = (() => {
 
         grid.innerHTML = items.map((item, idx) => {
             const primaryUrl = getPrimaryUrl(item);
-            const delay = Math.min(idx * 0.035, 0.55).toFixed(3);
+            const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
             return `
             <div class="video-card" style="padding: 24px; animation-delay: ${delay}s;" data-external-url="${escapeHTML(primaryUrl)}" tabindex="0" role="link">
                 <h4 class="video-title" style="font-size: 16px; margin-bottom: 20px;">
@@ -401,7 +385,7 @@ const CreatorHub = (() => {
             `;
         }).join("");
 
-        attachCardTilt(grid);
+        attachCardSpotlight(grid);
     };
 
     const renderAllSoftwareTabs = () => {
@@ -505,7 +489,7 @@ const CreatorHub = (() => {
         gridEl.innerHTML = sorted.map((v, idx) => {
             const dateObj = new Date(v.publishedAt);
             const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown Date';
-            const delay = Math.min(idx * 0.035, 0.55).toFixed(3);
+            const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
 
             return `
             <article class="video-card" data-video-id="${escapeHTML(v.id)}" data-video-title="${escapeHTML(v.title)}" style="animation-delay: ${delay}s;" tabindex="0" role="button">
@@ -524,14 +508,14 @@ const CreatorHub = (() => {
             `;
         }).join("");
 
-        attachCardTilt(gridEl);
+        attachCardSpotlight(gridEl);
     };
 
     const renderSkeletons = () => {
         const gridEl = document.getElementById("videoGrid");
         if (!gridEl) return;
-        gridEl.innerHTML = Array(6).fill(0).map((_, idx) => `
-            <div class="skeleton-card" style="animation-delay: ${idx * 0.04}s;">
+        gridEl.innerHTML = Array(6).fill(0).map(() => `
+            <div class="skeleton-card">
                 <div class="skeleton skeleton-thumb"></div>
                 <div class="skeleton-body">
                     <div class="skeleton skeleton-title"></div>
@@ -675,33 +659,33 @@ const CreatorHub = (() => {
         });
 
         const palette = ["#22d3ee", "#818cf8", "#34d399"];
-        const count = Math.min(58, Math.max(30, Math.floor((width * height) / 23000)));
+        const count = Math.min(64, Math.max(32, Math.floor((width * height) / 21000)));
 
         const particles = Array.from({ length: count }, (_, i) => ({
             x: Math.random() * width,
             y: Math.random() * height,
-            r: Math.random() * 2 + 0.9,
-            vx: (Math.random() - 0.5) * 0.52,
-            vy: (Math.random() - 0.5) * 0.52,
+            r: Math.random() * 2 + 1.0,
+            vx: (Math.random() - 0.5) * 0.55,
+            vy: (Math.random() - 0.5) * 0.55,
             color: palette[i % palette.length],
             pulse: Math.random() * Math.PI * 2
         }));
 
-        const pulses = Array.from({ length: 6 }, () => ({
+        const pulses = Array.from({ length: 7 }, () => ({
             x: Math.random() * width,
             y: Math.random() * height,
-            len: Math.random() * 85 + 55,
-            speed: Math.random() * 2.5 + 1.8,
+            len: Math.random() * 90 + 60,
+            speed: Math.random() * 2.6 + 1.8,
             horizontal: Math.random() > 0.5,
-            alpha: Math.random() * 0.3 + 0.14
+            alpha: Math.random() * 0.34 + 0.16
         }));
 
-        const rings = Array.from({ length: 3 }, (_, idx) => ({
+        const rings = Array.from({ length: 4 }, (_, idx) => ({
             x: Math.random() * width,
             y: Math.random() * height,
-            r: idx * 35,
-            maxR: 115 + Math.random() * 65,
-            speed: 0.48 + Math.random() * 0.25,
+            r: idx * 32,
+            maxR: 120 + Math.random() * 65,
+            speed: 0.5 + Math.random() * 0.25,
             color: palette[idx % palette.length]
         }));
 
@@ -716,7 +700,7 @@ const CreatorHub = (() => {
                     ring.x = Math.random() * width;
                     ring.y = Math.random() * height;
                 }
-                const alpha = (1 - ring.r / ring.maxR) * 0.2;
+                const alpha = (1 - ring.r / ring.maxR) * 0.22;
                 ctx.beginPath();
                 ctx.arc(ring.x, ring.y, ring.r, 0, Math.PI * 2);
                 ctx.strokeStyle = ring.color === "#22d3ee"
@@ -724,7 +708,7 @@ const CreatorHub = (() => {
                     : ring.color === "#818cf8"
                         ? `rgba(129, 140, 248, ${alpha.toFixed(3)})`
                         : `rgba(52, 211, 153, ${alpha.toFixed(3)})`;
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1.1;
                 ctx.stroke();
             }
 
@@ -780,7 +764,7 @@ const CreatorHub = (() => {
                     ctx.beginPath();
                     ctx.moveTo(p.x, p.y);
                     ctx.lineTo(mouse.x, mouse.y);
-                    ctx.strokeStyle = `rgba(34, 211, 238, ${(force * 0.38).toFixed(3)})`;
+                    ctx.strokeStyle = `rgba(34, 211, 238, ${(force * 0.4).toFixed(3)})`;
                     ctx.lineWidth = 1;
                     ctx.stroke();
                 }
@@ -794,13 +778,13 @@ const CreatorHub = (() => {
                 for (let j = i + 1; j < particles.length; j++) {
                     const p2 = particles[j];
                     const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (dist < 135) {
-                        const alpha = (1 - dist / 135) * 0.25;
+                    if (dist < 140) {
+                        const alpha = (1 - dist / 140) * 0.28;
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
                         ctx.strokeStyle = `rgba(129, 140, 248, ${alpha.toFixed(3)})`;
-                        ctx.lineWidth = 0.85;
+                        ctx.lineWidth = 0.9;
                         ctx.stroke();
                     }
                 }
@@ -811,14 +795,12 @@ const CreatorHub = (() => {
     };
 
     const bindEventListeners = () => {
-        // Sidebar tab buttons
         document.querySelectorAll("[data-tab]").forEach(btn => {
             btn.addEventListener("click", () => {
                 switchTab(btn.getAttribute("data-tab"));
             });
         });
 
-        // Coming-soon social buttons
         document.querySelectorAll("[data-coming-soon]").forEach(btn => {
             btn.addEventListener("click", () => {
                 const name = btn.getAttribute("data-coming-soon");
@@ -826,7 +808,6 @@ const CreatorHub = (() => {
             });
         });
 
-        // Search inputs
         document.querySelectorAll("[data-search-tab]").forEach(input => {
             const tab = input.getAttribute("data-search-tab");
             input.addEventListener("input", () => handleSearch(tab));
@@ -838,7 +819,6 @@ const CreatorHub = (() => {
             });
         });
 
-        // Custom sort dropdown
         const sortTrigger = document.getElementById("sortSelectTrigger");
         if (sortTrigger) {
             sortTrigger.addEventListener("click", toggleSortSelect);
@@ -856,7 +836,6 @@ const CreatorHub = (() => {
             });
         });
 
-        // Event delegation for Video cards and Software cards
         const mainContent = document.getElementById("mainContent");
         if (mainContent) {
             mainContent.addEventListener("click", (e) => {
@@ -890,7 +869,6 @@ const CreatorHub = (() => {
             });
         }
 
-        // Modal close handlers
         const modal = document.getElementById("playerModal");
         const modalBox = document.getElementById("playerModalBox");
         const closeBtn = document.getElementById("closeModalBtn");
@@ -899,7 +877,6 @@ const CreatorHub = (() => {
         if (modalBox) modalBox.addEventListener("click", (e) => e.stopPropagation());
         if (closeBtn) closeBtn.addEventListener("click", closePlayer);
 
-        // Close sort dropdown on outside click
         document.addEventListener("click", (e) => {
             if (!e.target.closest(".custom-select-wrapper")) {
                 const sOpts = document.getElementById("sortModeOptions");
