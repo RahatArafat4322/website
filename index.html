@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Nextcircuit Official Creator Hub" />
-  <meta name="theme-color" content="#181b20" />
+  <meta name="theme-color" content="#06080c" />
 
   <!-- Strict Security Headers -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
@@ -17,14 +17,30 @@
 
   <title>Nextcircuit | Official Creator Hub</title>
 
+  <!-- Critical Inline Fallback: Prevents white screen & canvas push-down on mobile -->
+  <style>
+    html, body {
+      background-color: #06080c;
+      color: #fafafa;
+      margin: 0;
+      padding: 0;
+    }
+    #bgParticles, .bg-grid-overlay, .ambient-orb {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+
   <script src="https://cdn.tailwindcss.com" defer></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css?v=4">
+  <script src="script.js?v=4" defer></script>
 </head>
 <body>
 
