@@ -77,7 +77,7 @@ const CreatorHub = (() => {
         badge.textContent = String(count);
         badge.style.animation = "none";
         void badge.offsetWidth;
-        badge.style.animation = "badgePop 0.45s var(--ease-spring) forwards";
+        badge.style.animation = "badgePop 0.45s var(--ease-spring) forwards, badgeBreathe 3s ease-in-out infinite";
     };
 
     // Animated Heading Text Character Wave on Tab Switch
@@ -88,14 +88,14 @@ const CreatorHub = (() => {
         if (!h1) return;
         const rawText = h1.getAttribute("data-text") || h1.textContent.trim();
         h1.innerHTML = Array.from(rawText).map((ch, idx) => {
-            if (ch === " ") return "&nbsp;";
-            return `<span class="char-reveal" style="animation-delay: ${(idx * 0.022).toFixed(3)}s;">${escapeHTML(ch)}</span>`;
+            if (ch === " ") return " ";
+            return `<span class="char-reveal" style="animation-delay: ${(idx * 0.025).toFixed(3)}s;">${escapeHTML(ch)}</span>`;
         }).join("");
     };
 
-    // 3D Tilt & Mouse Spotlight Tracking on Cards
+    // 3D Tilt & Mouse Spotlight Tracking on Cards (Desktop Pointer Only)
     const attachCardTilt = (container) => {
-        if (!container) return;
+        if (!container || window.matchMedia("(hover: none)").matches) return;
         const cards = container.querySelectorAll(".video-card");
         cards.forEach(card => {
             card.addEventListener("mousemove", (e) => {
@@ -164,7 +164,6 @@ const CreatorHub = (() => {
         const tabView = document.getElementById(`tab-${escapeHTML(tabId)}`);
         if (tabView) tabView.classList.add('active');
 
-        // Reset scroll position to top when switching tabs
         const mainContent = document.querySelector('.main-content');
         if (mainContent) mainContent.scrollTop = 0;
 
@@ -544,7 +543,7 @@ const CreatorHub = (() => {
         renderVideos();
     };
 
-    // Interactive Circuit-Constellation Background Canvas
+    // Interactive Circuit-Constellation + Shooting Data Pulses Background Canvas
     const initParticles = () => {
         const canvas = document.getElementById("bgParticles");
         if (!canvas) return;
@@ -572,7 +571,7 @@ const CreatorHub = (() => {
         });
 
         const palette = ["#22d3ee", "#818cf8", "#34d399"];
-        const count = Math.min(52, Math.max(26, Math.floor((width * height) / 26000)));
+        const count = Math.min(54, Math.max(28, Math.floor((width * height) / 25000)));
 
         const particles = Array.from({ length: count }, (_, i) => ({
             x: Math.random() * width,
@@ -584,8 +583,52 @@ const CreatorHub = (() => {
             pulse: Math.random() * Math.PI * 2
         }));
 
+        const pulses = Array.from({ length: 4 }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            len: Math.random() * 70 + 50,
+            speed: Math.random() * 2.2 + 1.6,
+            horizontal: Math.random() > 0.5,
+            alpha: Math.random() * 0.25 + 0.12
+        }));
+
         const animate = () => {
             ctx.clearRect(0, 0, width, height);
+
+            // Shooting circuit data pulses
+            for (const beam of pulses) {
+                if (beam.horizontal) {
+                    beam.x += beam.speed;
+                    if (beam.x > width + beam.len) {
+                        beam.x = -beam.len;
+                        beam.y = Math.random() * height;
+                    }
+                    const grad = ctx.createLinearGradient(beam.x - beam.len, beam.y, beam.x, beam.y);
+                    grad.addColorStop(0, "rgba(34, 211, 238, 0)");
+                    grad.addColorStop(1, `rgba(34, 211, 238, ${beam.alpha})`);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 1.4;
+                    ctx.beginPath();
+                    ctx.moveTo(beam.x - beam.len, beam.y);
+                    ctx.lineTo(beam.x, beam.y);
+                    ctx.stroke();
+                } else {
+                    beam.y += beam.speed;
+                    if (beam.y > height + beam.len) {
+                        beam.y = -beam.len;
+                        beam.x = Math.random() * width;
+                    }
+                    const grad = ctx.createLinearGradient(beam.x, beam.y - beam.len, beam.x, beam.y);
+                    grad.addColorStop(0, "rgba(129, 140, 248, 0)");
+                    grad.addColorStop(1, `rgba(129, 140, 248, ${beam.alpha})`);
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 1.4;
+                    ctx.beginPath();
+                    ctx.moveTo(beam.x, beam.y - beam.len);
+                    ctx.lineTo(beam.x, beam.y);
+                    ctx.stroke();
+                }
+            }
 
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
@@ -593,7 +636,6 @@ const CreatorHub = (() => {
                 p.x = (p.x + p.vx + width) % width;
                 p.y = (p.y + p.vy + height) % height;
 
-                // Subtle interactive mouse repulsion & glow
                 const dxMouse = p.x - mouse.x;
                 const dyMouse = p.y - mouse.y;
                 const distMouse = Math.hypot(dxMouse, dyMouse);
@@ -610,14 +652,12 @@ const CreatorHub = (() => {
                     ctx.stroke();
                 }
 
-                // Draw glowing node
                 const radius = p.r + Math.sin(p.pulse) * 0.35;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, Math.max(0.5, radius), 0, Math.PI * 2);
                 ctx.fillStyle = p.color;
                 ctx.fill();
 
-                // Connect nearby nodes with circuit lines
                 for (let j = i + 1; j < particles.length; j++) {
                     const p2 = particles[j];
                     const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
