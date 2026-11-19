@@ -6,10 +6,10 @@
   <meta name="description" content="Nextcircuit Official Creator Hub" />
   <meta name="theme-color" content="#06080c" />
 
-  <!-- Strict Security Headers -->
+  <!-- Strict Security Headers (Zero unsafe-inline scripts) -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://*.googleusercontent.com; frame-src https://www.youtube.com; connect-src 'self' https://api.github.com https://www.googleapis.com;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://*.googleusercontent.com; frame-src https://www.youtube.com; connect-src 'self' https://www.googleapis.com; base-uri 'self'; form-action 'self'; object-src 'none';" />
 
   <meta property="og:title" content="Nextcircuit | Official Creator Hub" />
   <meta property="og:image" content="image_499882.png" />
@@ -33,14 +33,12 @@
     }
   </style>
 
-  <script src="https://cdn.tailwindcss.com" defer></script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=4">
-  <script src="script.js?v=4" defer></script>
+  <link rel="stylesheet" href="style.css?v=5">
+  <script src="script.js?v=5" defer></script>
 </head>
 <body>
 
@@ -70,13 +68,13 @@
     <section class="sidebar-section">
       <h3 class="section-label">Content</h3>
       <div class="social-links">
-        <button class="social-btn nav-btn active" onclick="CreatorHub.switchTab('youtube')" id="nav-youtube">
+        <button type="button" class="social-btn nav-btn active" data-tab="youtube" id="nav-youtube">
           <div class="social-btn-left">
             <img src="youtube.png" alt="YouTube" class="icon-badge" />
             <span class="nav-text truncate">YouTube Videos</span>
           </div>
         </button>
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('github')" id="nav-github">
+        <button type="button" class="social-btn nav-btn" data-tab="github" id="nav-github">
           <div class="social-btn-left">
             <img src="github.png" alt="GitHub" class="icon-badge" />
             <span class="nav-text truncate">GitHub Repositories</span>
@@ -88,19 +86,19 @@
     <section class="sidebar-section">
       <h3 class="section-label">Software Links</h3>
       <div class="social-links">
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('windows')" id="nav-windows">
+        <button type="button" class="social-btn nav-btn" data-tab="windows" id="nav-windows">
           <div class="social-btn-left">
             <img src="windows.png" alt="Windows" class="icon-badge" />
             <span class="nav-text">Windows Software</span>
           </div>
         </button>
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('linux')" id="nav-linux">
+        <button type="button" class="social-btn nav-btn" data-tab="linux" id="nav-linux">
           <div class="social-btn-left">
             <img src="linux.png" alt="Linux" class="icon-badge" />
             <span class="nav-text">Linux Software</span>
           </div>
         </button>
-        <button class="social-btn nav-btn" onclick="CreatorHub.switchTab('android')" id="nav-android">
+        <button type="button" class="social-btn nav-btn" data-tab="android" id="nav-android">
           <div class="social-btn-left">
             <img src="android.png" alt="Android" class="icon-badge" />
             <span class="nav-text">Android Apps</span>
@@ -112,36 +110,36 @@
     <section class="sidebar-section">
       <h3 class="section-label">Social Media Links</h3>
       <div class="social-links">
-        <a href="https://youtube.com/@next_circuit" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
+        <a href="https://youtube.com/@next_circuit" target="_blank" rel="noopener noreferrer nofollow" class="social-btn nav-btn">
           <div class="social-btn-left">
             <img src="youtube.png" alt="YouTube" class="icon-badge" />
             <span class="nav-text">YouTube</span>
           </div>
         </a>
-        <a href="https://github.com/RahatArafat4322" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
+        <a href="https://github.com/RahatArafat4322" target="_blank" rel="noopener noreferrer nofollow" class="social-btn nav-btn">
           <div class="social-btn-left">
             <img src="github.png" alt="GitHub" class="icon-badge" />
             <span class="nav-text">GitHub</span>
           </div>
         </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
+        <button type="button" class="social-btn nav-btn" data-coming-soon="Discord">
           <div class="social-btn-left">
             <img src="discord.png" alt="Discord" class="icon-badge" />
             <span class="nav-text">Discord</span>
           </div>
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
+        </button>
+        <button type="button" class="social-btn nav-btn" data-coming-soon="Facebook">
           <div class="social-btn-left">
             <img src="facebook.png" alt="Facebook" class="icon-badge" />
             <span class="nav-text">Facebook</span>
           </div>
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" class="social-btn nav-btn" style="text-decoration: none;">
+        </button>
+        <button type="button" class="social-btn nav-btn" data-coming-soon="LinkedIn">
           <div class="social-btn-left">
             <img src="linkedin.png" alt="LinkedIn" class="icon-badge" />
             <span class="nav-text">LinkedIn</span>
           </div>
-        </a>
+        </button>
       </div>
     </section>
   </nav>
@@ -157,15 +155,15 @@
           <span class="count-badge" id="count-youtube">0</span>
         </div>
         <div class="controls">
-          <input type="text" id="searchInput" placeholder="Search videos..." oninput="CreatorHub.handleSearch('youtube')" onkeyup="CreatorHub.handleSearch('youtube')" class="search-input">
+          <input type="text" id="searchInput" data-search-tab="youtube" placeholder="Search videos..." class="search-input" autocomplete="off">
           <div class="custom-select-wrapper" style="width: 200px;">
-            <div class="custom-select" onclick="CreatorHub.toggleSortSelect()" tabindex="0">
+            <div class="custom-select" id="sortSelectTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
               <span id="sortModeDisplay">Sort: Most Viewed</span>
-              <span style="font-size: 10px; color: var(--text-muted);">▼</span>
+              <span class="select-arrow">▼</span>
             </div>
-            <div class="custom-options hidden" id="sortModeOptions">
-              <div class="custom-option" onclick="CreatorHub.selectSort('views', 'Sort: Most Viewed')">Sort: Most Viewed</div>
-              <div class="custom-option" onclick="CreatorHub.selectSort('newest', 'Sort: Newest First')">Sort: Newest First</div>
+            <div class="custom-options hidden" id="sortModeOptions" role="listbox">
+              <div class="custom-option" data-sort-val="views" data-sort-label="Sort: Most Viewed" role="option">Sort: Most Viewed</div>
+              <div class="custom-option" data-sort-val="newest" data-sort-label="Sort: Newest First" role="option">Sort: Newest First</div>
             </div>
             <input type="hidden" id="sortMode" value="views">
           </div>
@@ -182,7 +180,7 @@
           <span class="count-badge" id="count-github">0</span>
         </div>
         <div class="controls">
-          <input type="text" id="searchGithub" placeholder="Search repositories..." oninput="CreatorHub.handleSearch('github')" onkeyup="CreatorHub.handleSearch('github')" class="search-input">
+          <input type="text" id="searchGithub" data-search-tab="github" placeholder="Search repositories..." class="search-input" autocomplete="off">
         </div>
       </header>
       <section class="video-grid" id="githubGrid"></section>
@@ -196,7 +194,7 @@
           <span class="count-badge" id="count-windows">0</span>
         </div>
         <div class="controls">
-          <input type="text" id="searchWindows" placeholder="Search Windows software..." oninput="CreatorHub.handleSearch('windows')" onkeyup="CreatorHub.handleSearch('windows')" class="search-input">
+          <input type="text" id="searchWindows" data-search-tab="windows" placeholder="Search Windows software..." class="search-input" autocomplete="off">
         </div>
       </header>
       <section class="video-grid" id="grid-windows"></section>
@@ -210,7 +208,7 @@
           <span class="count-badge" id="count-linux">0</span>
         </div>
         <div class="controls">
-          <input type="text" id="searchLinux" placeholder="Search Linux software..." oninput="CreatorHub.handleSearch('linux')" onkeyup="CreatorHub.handleSearch('linux')" class="search-input">
+          <input type="text" id="searchLinux" data-search-tab="linux" placeholder="Search Linux software..." class="search-input" autocomplete="off">
         </div>
       </header>
       <section class="video-grid" id="grid-linux"></section>
@@ -224,22 +222,25 @@
           <span class="count-badge" id="count-android">0</span>
         </div>
         <div class="controls">
-          <input type="text" id="searchAndroid" placeholder="Search Android apps..." oninput="CreatorHub.handleSearch('android')" onkeyup="CreatorHub.handleSearch('android')" class="search-input">
+          <input type="text" id="searchAndroid" data-search-tab="android" placeholder="Search Android apps..." class="search-input" autocomplete="off">
         </div>
       </header>
       <section class="video-grid" id="grid-android"></section>
     </div>
   </main>
 
+  <!-- Toast Notification -->
+  <div class="toast-banner" id="toastBanner" role="status" aria-live="polite"></div>
+
   <!-- Video Player Modal -->
-  <div class="modal-overlay" id="playerModal" onclick="CreatorHub.closePlayer()">
-    <div class="player-modal" onclick="event.stopPropagation()">
+  <div class="modal-overlay" id="playerModal">
+    <div class="player-modal" id="playerModalBox">
       <header class="player-header">
-        <strong id="playerTitle" class="truncate text-sm sm:text-base font-medium">Now Playing</strong>
-        <button type="button" class="close-btn" onclick="CreatorHub.closePlayer()">✕ Close</button>
+        <strong id="playerTitle" class="player-title truncate">Now Playing</strong>
+        <button type="button" class="close-btn" id="closeModalBtn">✕ Close</button>
       </header>
       <div class="iframe-wrap">
-        <iframe id="youtubeIframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="youtubeIframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="YouTube Video Player"></iframe>
       </div>
     </div>
   </div>
