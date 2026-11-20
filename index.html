@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Nextcircuit Official Creator Hub" />
-  <meta name="theme-color" content="#06080c" />
+  <meta name="theme-color" content="#05070b" />
 
   <!-- Strict Security Headers (Zero unsafe-inline scripts) -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://*.googleusercontent.com; frame-src https://www.youtube.com; connect-src 'self' https://www.googleapis.com; base-uri 'self'; form-action 'self'; object-src 'none';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://i.ytimg.com https://*.googleusercontent.com; frame-src https://www.youtube.com; connect-src 'self' https://api.github.com https://www.googleapis.com; base-uri 'self'; form-action 'self'; object-src 'none';" />
 
   <meta property="og:title" content="Nextcircuit | Official Creator Hub" />
   <meta property="og:image" content="image_499882.png" />
@@ -20,7 +20,7 @@
   <!-- Critical Inline Fallback: Prevents white screen & canvas push-down on mobile -->
   <style>
     html, body {
-      background-color: #06080c;
+      background-color: #05070b;
       color: #fafafa;
       margin: 0;
       padding: 0;
@@ -37,8 +37,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=5">
-  <script src="script.js?v=5" defer></script>
+  <link rel="stylesheet" href="style.css?v=6">
+  <script src="script.js?v=6" defer></script>
 </head>
 <body>
 
@@ -169,6 +169,16 @@
           </div>
         </div>
       </header>
+
+      <!-- Topic Filter Chips -->
+      <div class="topic-filters" id="topicFilters" role="group" aria-label="Filter videos by topic">
+        <button type="button" class="topic-chip active" data-topic="all">All</button>
+        <button type="button" class="topic-chip" data-topic="stm32">STM32</button>
+        <button type="button" class="topic-chip" data-topic="esp32">ESP32</button>
+        <button type="button" class="topic-chip" data-topic="arduino">Arduino</button>
+        <button type="button" class="topic-chip" data-topic="pcb">PCB</button>
+      </div>
+
       <section class="video-grid" id="videoGrid"></section>
     </div>
 
