@@ -462,39 +462,6 @@ const CreatorHub = (() => {
         ['windows', 'linux', 'android'].forEach(platform => renderSoftwareGrid(platform));
     };
 
-    const syncLiveGitHubApi = async () => {
-        try {
-            const res = await fetch(`https://api.github.com/users/${encodeURIComponent(config.githubUser)}/repos?sort=updated&per_page=40`, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'omit',
-                headers: { 'Accept': 'application/vnd.github+json' }
-            });
-            if (!res.ok) return;
-            const repos = await res.json();
-            if (!Array.isArray(repos) || repos.length === 0) return;
-
-            const mapped = repos
-                .filter(r => r && !r.fork && typeof r.name === "string")
-                .map(r => ({
-                    name: r.name.replace(/[_-]+/g, " "),
-                    url: sanitizeUrl(r.html_url),
-                    description: typeof r.description === "string" ? r.description.slice(0, 220) : "",
-                    language: typeof r.language === "string" ? r.language : "",
-                    stars: Number.isFinite(Number(r.stargazers_count)) ? Number(r.stargazers_count) : 0,
-                    updatedAt: typeof r.updated_at === "string" ? r.updated_at : ""
-                }));
-
-            if (mapped.length > 0) {
-                config.software.github = mapped;
-                saveConfig();
-                fetchGitHubRepos();
-            }
-        } catch (_) {
-            // Keep software.json / cached GitHub repos if rate-limited or offline
-        }
-    };
-
     const syncGitHubSoftware = async () => {
         renderAllSoftwareTabs();
 
@@ -516,9 +483,7 @@ const CreatorHub = (() => {
                     windows: sanitizeSoftwareList(data.windows),
                     linux: sanitizeSoftwareList(data.linux),
                     android: sanitizeSoftwareList(data.android),
-                    github: config.software.github.length > 0
-                        ? config.software.github
-                        : sanitizeSoftwareList(data.github)
+                    github: sanitizeSoftwareList(data.github)
                 };
                 saveConfig();
                 renderAllSoftwareTabs();
@@ -534,8 +499,6 @@ const CreatorHub = (() => {
             }
         }
 
-        // Enrich GitHub tab with live public repositories
-        syncLiveGitHubApi();
     };
 
     const handleSearch = (tabId = 'youtube') => {
