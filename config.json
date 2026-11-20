@@ -1,0 +1,21 @@
+{
+  "channelName": "Nextcircuit",
+  "handle": "@next_circuit",
+  "bio": "Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects.",
+  "typewriterPhrases": [
+    "Embedded Systems & PCB Design",
+    "STM32 & ARM Cortex-M Firmware",
+    "ESP32 & IoT Wireless Projects",
+    "Arduino & Hardware Engineering",
+    "Open-Source Tools & Software"
+  ],
+  "topics": [
+    { "id": "all", "label": "All" },
+    { "id": "stm32", "label": "STM32" },
+    { "id": "esp32", "label": "ESP32" },
+    { "id": "arduino", "label": "Arduino" },
+    { "id": "pcb", "label": "PCB" }
+  ],
+  "channelId": "UCYjqxJnWhLHKPc9mkuc2Mcg",
+  "apiKey": "AIzaSyAAycUXr6jdqRUgQUym-Czq63BqDG0SvXg"
+}

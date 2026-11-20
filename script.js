@@ -29,8 +29,31 @@ const CreatorHub = (() => {
         android: ""
     };
 
+    let siteConfig = {
+        channelName: DEFAULT_CONFIG.channelName,
+        handle: "@next_circuit",
+        bio: "Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects.",
+        typewriterPhrases: [
+            "Embedded Systems & PCB Design",
+            "STM32 & ARM Cortex-M Firmware",
+            "ESP32 & IoT Wireless Projects",
+            "Arduino & Hardware Engineering",
+            "Open-Source Tools & Software"
+        ],
+        topics: [
+            { id: "all", label: "All" },
+            { id: "stm32", label: "STM32" },
+            { id: "esp32", label: "ESP32" },
+            { id: "arduino", label: "Arduino" },
+            { id: "pcb", label: "PCB" }
+        ],
+        channelId: DEFAULT_CONFIG.channelId,
+        apiKey: DEFAULT_CONFIG.apiKey
+    };
+
     let activeTopic = "all";
     let softwareSyncError = null;
+    let youtubeSyncError = null;
     let toastTimer = null;
 
     // SECURITY: Strict URL allowlist (only HTTPS external URLs or safe relative asset paths)
@@ -73,6 +96,7 @@ const CreatorHub = (() => {
                 size: typeof item.size === "string" ? item.size.slice(0, 32) : "",
                 description: typeof item.description === "string" ? item.description.slice(0, 220) : "",
                 language: typeof item.language === "string" ? item.language.slice(0, 40) : "",
+                credit: typeof item.credit === "string" ? item.credit.slice(0, 60) : "",
                 stars: Number.isFinite(Number(item.stars)) ? Number(item.stars) : null,
                 updatedAt: typeof item.updatedAt === "string" ? item.updatedAt : "",
                 url: sanitizeUrl(item.url),
@@ -288,19 +312,15 @@ const CreatorHub = (() => {
         const el = document.getElementById("typewriterText");
         if (!el) return;
 
-        const phrases = [
-            "Embedded Systems & PCB Design",
-            "STM32 & ARM Cortex-M Firmware",
-            "ESP32 & IoT Wireless Projects",
-            "Arduino & Hardware Engineering",
-            "Open-Source Tools & Software"
-        ];
-
         let phraseIdx = 0;
-        let charIdx = phrases[0].length;
+        let charIdx = (siteConfig.typewriterPhrases[0] || "").length;
         let isDeleting = true;
 
         const tick = () => {
+            const phrases = Array.isArray(siteConfig.typewriterPhrases) && siteConfig.typewriterPhrases.length > 0
+                ? siteConfig.typewriterPhrases
+                : ["Embedded Systems & PCB Design"];
+            if (phraseIdx >= phrases.length) phraseIdx = 0;
             const currentPhrase = phrases[phraseIdx];
             if (isDeleting) {
                 charIdx--;
@@ -361,16 +381,19 @@ const CreatorHub = (() => {
             const href = sanitizeUrl(repo.url || repo.driveUrl);
             const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
             const pills = [];
-            if (repo.language) pills.push(`<span class="meta-pill accent">${escapeHTML(repo.language)}</span>`);
+            if (repo.version) pills.push(`<span class="meta-pill accent">${escapeHTML(repo.version)}</span>`);
+            if (repo.language) pills.push(`<span class="meta-pill">${escapeHTML(repo.language)}</span>`);
             if (Number.isFinite(repo.stars) && repo.stars > 0) pills.push(`<span class="meta-pill">★ ${repo.stars}</span>`);
 
             const descHtml = repo.description
                 ? `<p class="card-desc">${escapeHTML(repo.description)}</p>`
                 : "";
 
-            const updatedLabel = repo.updatedAt
-                ? new Date(repo.updatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-                : "View on GitHub ↗";
+            const updatedLabel = (repo.credit && repo.credit.trim())
+                ? repo.credit.trim()
+                : (repo.updatedAt
+                    ? new Date(repo.updatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+                    : "Repository");
 
             return `
             <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="video-card" style="padding: 24px; animation-delay: ${delay}s;">
@@ -379,9 +402,6 @@ const CreatorHub = (() => {
                         <svg class="repo-icon" width="18" height="18" viewBox="0 0 16 16" fill="var(--text-muted)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
                         <span>${escapeHTML(repo.name)}</span>
                     </h4>
-                    <button type="button" class="copy-link-btn" data-copy-url="${escapeHTML(href)}" title="Copy repository URL" aria-label="Copy repository URL">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    </button>
                 </div>
                 ${descHtml}
                 ${pills.length ? `<div class="meta-pills">${pills.join("")}</div>` : ""}
@@ -443,9 +463,6 @@ const CreatorHub = (() => {
                     <h4 class="video-title" style="font-size: 16px;">
                         ${escapeHTML(item.name)}
                     </h4>
-                    <button type="button" class="copy-link-btn" data-copy-url="${escapeHTML(primaryUrl)}" title="Copy download link" aria-label="Copy download link">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    </button>
                 </div>
                 ${descHtml}
                 ${pills.length ? `<div class="meta-pills">${pills.join("")}</div>` : ""}
@@ -560,12 +577,16 @@ const CreatorHub = (() => {
         }
 
         if (sorted.length === 0) {
-            gridEl.innerHTML = `
-                <div style="grid-column: 1 / -1; padding: 60px 32px; background: rgba(0,0,0,0.35); border: 1px dashed var(--border-subtle); border-radius: 12px; text-align: center;">
-                    <h3 style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">Waiting for Feed Sync</h3>
-                    <p style="font-size: 13px; color: var(--text-secondary);">Videos will appear here securely once synced.</p>
-                </div>
-            `;
+            if (youtubeSyncError) {
+                gridEl.innerHTML = `<div class="error-banner">${escapeHTML(youtubeSyncError)}</div>`;
+            } else {
+                gridEl.innerHTML = `
+                    <div style="grid-column: 1 / -1; padding: 60px 32px; background: rgba(0,0,0,0.35); border: 1px dashed var(--border-subtle); border-radius: 12px; text-align: center;">
+                        <h3 style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">Waiting for Feed Sync</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary);">Videos will appear here securely once synced.</p>
+                    </div>
+                `;
+            }
             return;
         }
 
@@ -609,32 +630,116 @@ const CreatorHub = (() => {
         `).join("");
     };
 
+    const applySiteConfig = () => {
+        const nameEl = document.getElementById("displayChannelName");
+        if (nameEl) nameEl.textContent = siteConfig.channelName;
+
+        const handleEl = document.querySelector(".channel-handle");
+        if (handleEl) handleEl.textContent = siteConfig.handle;
+
+        const bioEl = document.querySelector(".channel-bio");
+        if (bioEl) bioEl.textContent = siteConfig.bio;
+
+        const twEl = document.getElementById("typewriterText");
+        if (twEl && Array.isArray(siteConfig.typewriterPhrases) && siteConfig.typewriterPhrases.length > 0) {
+            twEl.textContent = siteConfig.typewriterPhrases[0];
+        }
+
+        const filtersEl = document.getElementById("topicFilters");
+        if (filtersEl && Array.isArray(siteConfig.topics)) {
+            filtersEl.innerHTML = siteConfig.topics.map(t => {
+                const id = String(t.id || "all").toLowerCase();
+                const cls = id === activeTopic ? "topic-chip active" : "topic-chip";
+                return `<button type="button" class="${cls}" data-topic="${escapeHTML(id)}">${escapeHTML(t.label || id)}</button>`;
+            }).join("");
+        }
+    };
+
     const syncYouTubeVideos = async () => {
-        if (!config.channelId || !config.apiKey) {
+        if (!config.videos || config.videos.length === 0) renderSkeletons();
+
+        try {
+            const cfgRes = await fetch(`config.json?t=${Date.now()}`, {
+                method: 'GET',
+                mode: 'same-origin',
+                cache: 'no-store',
+                credentials: 'omit',
+                headers: { 'Accept': 'application/json' }
+            });
+            if (cfgRes.ok) {
+                const cfgData = await cfgRes.json();
+                if (cfgData && typeof cfgData === "object") {
+                    siteConfig = { ...siteConfig, ...cfgData };
+                    applySiteConfig();
+                }
+            }
+        } catch (_) {
+            // Keep defaults if config.json missing
+        }
+
+        const apiKey = siteConfig.apiKey || config.apiKey;
+        const channelId = siteConfig.channelId || config.channelId;
+
+        if (!channelId || !apiKey) {
             renderVideos();
             return;
         }
 
-        if (!config.videos || config.videos.length === 0) renderSkeletons();
-
         try {
-            const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${encodeURIComponent(config.apiKey)}&channelId=${encodeURIComponent(config.channelId)}&part=snippet,id&order=date&maxResults=30&type=video`, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'omit'
-            });
-            if (!searchRes.ok) throw new Error("YouTube search failed");
-            const searchData = await searchRes.json();
+            let idList = [];
+            let lastStatus = null;
 
-            if (searchData.items && searchData.items.length > 0) {
-                const ids = searchData.items
-                    .map(item => item.id?.videoId)
-                    .filter(isValidVideoId)
-                    .join(",");
+            if (channelId.startsWith("UC")) {
+                const uploadsId = "UU" + channelId.slice(2);
+                const plRes = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?key=${encodeURIComponent(apiKey)}&playlistId=${encodeURIComponent(uploadsId)}&part=snippet&maxResults=30`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                if (plRes.ok) {
+                    const plData = await plRes.json();
+                    if (Array.isArray(plData.items)) {
+                        idList = plData.items
+                            .map(item => item.snippet?.resourceId?.videoId)
+                            .filter(isValidVideoId);
+                    }
+                } else {
+                    lastStatus = plRes.status;
+                }
+            }
 
-                if (!ids) throw new Error("No valid video IDs");
+            if (idList.length === 0) {
+                const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${encodeURIComponent(apiKey)}&channelId=${encodeURIComponent(channelId)}&part=snippet,id&order=date&maxResults=30&type=video`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                if (searchRes.ok) {
+                    const searchData = await searchRes.json();
+                    if (Array.isArray(searchData.items)) {
+                        idList = searchData.items
+                            .map(item => item.id?.videoId)
+                            .filter(isValidVideoId);
+                    }
+                } else if (!lastStatus) {
+                    lastStatus = searchRes.status;
+                }
+            }
 
-                const statsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?key=${encodeURIComponent(config.apiKey)}&id=${encodeURIComponent(ids)}&part=snippet,statistics`, {
+            if (idList.length === 0) {
+                if (!config.videos || config.videos.length === 0) {
+                    youtubeSyncError = lastStatus === 403
+                        ? "YouTube API returned 403 (check Google Cloud API key referrer restrictions or quota)."
+                        : "Could not load YouTube videos (API key restricted, quota exceeded, or offline).";
+                }
+                renderVideos();
+                return;
+            }
+
+            const ids = idList.join(",");
+            if (ids) {
+
+                const statsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?key=${encodeURIComponent(apiKey)}&id=${encodeURIComponent(ids)}&part=snippet,statistics`, {
                     method: 'GET',
                     mode: 'cors',
                     credentials: 'omit'
@@ -652,11 +757,14 @@ const CreatorHub = (() => {
                             publishedAt: String(v.snippet?.publishedAt || ""),
                             thumbnail: sanitizeUrl(v.snippet?.thumbnails?.high?.url || v.snippet?.thumbnails?.medium?.url)
                         }));
+                    youtubeSyncError = null;
                     saveConfig();
                 }
             }
         } catch (_) {
-            // Fallback to cached videos silently
+            if (!config.videos || config.videos.length === 0) {
+                youtubeSyncError = "Could not load YouTube videos (check network or API key settings in config.json).";
+            }
         }
         renderVideos();
     };
@@ -888,11 +996,13 @@ const CreatorHub = (() => {
             });
         });
 
-        document.querySelectorAll("[data-topic]").forEach(chip => {
-            chip.addEventListener("click", () => {
-                selectTopic(chip.getAttribute("data-topic"));
+        const filtersEl = document.getElementById("topicFilters");
+        if (filtersEl) {
+            filtersEl.addEventListener("click", (e) => {
+                const chip = e.target.closest("[data-topic]");
+                if (chip) selectTopic(chip.getAttribute("data-topic"));
             });
-        });
+        }
 
         document.querySelectorAll("[data-search-tab]").forEach(input => {
             const tab = input.getAttribute("data-search-tab");
