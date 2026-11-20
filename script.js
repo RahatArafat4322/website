@@ -5,6 +5,7 @@ const CreatorHub = (() => {
 
     const DEFAULT_CONFIG = Object.freeze({
         channelName: "Nextcircuit",
+        githubUser: "RahatArafat4322",
         logoUrl: "image_499882.png",
         channelId: "UCYjqxJnWhLHKPc9mkuc2Mcg",
         apiKey: "AIzaSyAAycUXr6jdqRUgQUym-Czq63BqDG0SvXg",
@@ -28,6 +29,7 @@ const CreatorHub = (() => {
         android: ""
     };
 
+    let activeTopic = "all";
     let softwareSyncError = null;
     let toastTimer = null;
 
@@ -67,6 +69,12 @@ const CreatorHub = (() => {
             .filter(item => item && typeof item === "object" && typeof item.name === "string")
             .map(item => ({
                 name: item.name.slice(0, 120),
+                version: typeof item.version === "string" ? item.version.slice(0, 32) : "",
+                size: typeof item.size === "string" ? item.size.slice(0, 32) : "",
+                description: typeof item.description === "string" ? item.description.slice(0, 220) : "",
+                language: typeof item.language === "string" ? item.language.slice(0, 40) : "",
+                stars: Number.isFinite(Number(item.stars)) ? Number(item.stars) : null,
+                updatedAt: typeof item.updatedAt === "string" ? item.updatedAt : "",
                 url: sanitizeUrl(item.url),
                 driveUrl: sanitizeUrl(item.driveUrl),
                 links: Array.isArray(item.links)
@@ -135,6 +143,24 @@ const CreatorHub = (() => {
         }, 2600);
     };
 
+    const copyLinkToClipboard = async (url) => {
+        const cleanUrl = sanitizeUrl(url);
+        if (!cleanUrl || cleanUrl === "#") {
+            showToast("No download link available yet");
+            return;
+        }
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(cleanUrl);
+                showToast("Link copied to clipboard!");
+                return;
+            }
+        } catch (_) {
+            // Fallback below
+        }
+        showToast("Unable to copy link automatically");
+    };
+
     const formatViews = (num) => {
         if (!num && num !== 0) return "YouTube Upload";
         if (num >= 1000000) return (num / 1000000).toFixed(1) + "M views";
@@ -148,7 +174,6 @@ const CreatorHub = (() => {
         badge.textContent = String(count);
     };
 
-    // Smooth Character Color-Wave on Tab Switch (no pop/scale)
     const animateSectionHeading = (tabId) => {
         const tabEl = document.getElementById(`tab-${tabId}`);
         if (!tabEl) return;
@@ -161,7 +186,6 @@ const CreatorHub = (() => {
         }).join("");
     };
 
-    // Mouse Spotlight Glow Tracking Only (No 3D Pop-Up/Tilt)
     const attachCardSpotlight = (container) => {
         if (!container || window.matchMedia("(hover: none)").matches) return;
         const cards = container.querySelectorAll(".video-card");
@@ -215,7 +239,7 @@ const CreatorHub = (() => {
         window.open(cleanUrl, "_blank", "noopener,noreferrer");
     };
 
-    const switchTab = (tabId) => {
+    const switchTab = (tabId, updateHash = true) => {
         if (!VALID_TABS.has(tabId)) return;
 
         document.querySelectorAll('button.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -228,6 +252,10 @@ const CreatorHub = (() => {
 
         const mainContent = document.getElementById('mainContent');
         if (mainContent) mainContent.scrollTop = 0;
+
+        if (updateHash && window.location.hash !== `#${tabId}`) {
+            history.replaceState(null, "", `#${tabId}`);
+        }
 
         animateSectionHeading(tabId);
 
@@ -256,7 +284,6 @@ const CreatorHub = (() => {
         }
     };
 
-    // Animated Typewriter Cycling Specialties in Sidebar
     const initTypewriter = () => {
         const el = document.getElementById("typewriterText");
         if (!el) return;
@@ -304,7 +331,7 @@ const CreatorHub = (() => {
         const grid = document.getElementById("githubGrid");
         if (!grid) return;
 
-        if (softwareSyncError) {
+        if (softwareSyncError && (!config.software?.github || config.software.github.length === 0)) {
             grid.innerHTML = `<div class="error-banner">${escapeHTML(softwareSyncError)}</div>`;
             updateCountBadge("github", 0);
             return;
@@ -312,12 +339,16 @@ const CreatorHub = (() => {
 
         const allRepos = (config.software && Array.isArray(config.software.github)) ? config.software.github : [];
         const query = (searchQueries.github || "").toLowerCase();
-        const repos = allRepos.filter(repo => (repo.name || "").toLowerCase().includes(query));
+        const repos = allRepos.filter(repo =>
+            (repo.name || "").toLowerCase().includes(query) ||
+            (repo.description || "").toLowerCase().includes(query) ||
+            (repo.language || "").toLowerCase().includes(query)
+        );
 
         updateCountBadge("github", repos.length);
 
         if (allRepos.length === 0) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No repositories linked yet. Edit software.json to add some!</div>`;
+            grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No repositories linked yet.</div>`;
             return;
         }
 
@@ -329,14 +360,34 @@ const CreatorHub = (() => {
         grid.innerHTML = repos.map((repo, idx) => {
             const href = sanitizeUrl(repo.url || repo.driveUrl);
             const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
+            const pills = [];
+            if (repo.language) pills.push(`<span class="meta-pill accent">${escapeHTML(repo.language)}</span>`);
+            if (Number.isFinite(repo.stars) && repo.stars > 0) pills.push(`<span class="meta-pill">★ ${repo.stars}</span>`);
+
+            const descHtml = repo.description
+                ? `<p class="card-desc">${escapeHTML(repo.description)}</p>`
+                : "";
+
+            const updatedLabel = repo.updatedAt
+                ? new Date(repo.updatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+                : "View on GitHub ↗";
+
             return `
             <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="video-card" style="padding: 24px; animation-delay: ${delay}s;">
-                <h4 class="video-title" style="font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                    <svg class="repo-icon" width="18" height="18" viewBox="0 0 16 16" fill="var(--text-muted)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
-                    <span>${escapeHTML(repo.name)}</span>
-                </h4>
-                <div class="video-stats" style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-subtle);">
-                    <span>View on GitHub ↗</span>
+                <div class="card-header-row">
+                    <h4 class="video-title" style="font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                        <svg class="repo-icon" width="18" height="18" viewBox="0 0 16 16" fill="var(--text-muted)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
+                        <span>${escapeHTML(repo.name)}</span>
+                    </h4>
+                    <button type="button" class="copy-link-btn" data-copy-url="${escapeHTML(href)}" title="Copy repository URL" aria-label="Copy repository URL">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+                ${descHtml}
+                ${pills.length ? `<div class="meta-pills">${pills.join("")}</div>` : ""}
+                <div class="video-stats" style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+                    <span>${escapeHTML(updatedLabel)}</span>
+                    <span>GitHub ↗</span>
                 </div>
             </a>
             `;
@@ -358,7 +409,10 @@ const CreatorHub = (() => {
 
         const allItems = (config.software && Array.isArray(config.software[platform])) ? config.software[platform] : [];
         const query = (searchQueries[platform] || "").toLowerCase();
-        const items = allItems.filter(item => (item.name || "").toLowerCase().includes(query));
+        const items = allItems.filter(item =>
+            (item.name || "").toLowerCase().includes(query) ||
+            (item.description || "").toLowerCase().includes(query)
+        );
 
         updateCountBadge(platform, items.length);
 
@@ -375,11 +429,26 @@ const CreatorHub = (() => {
         grid.innerHTML = items.map((item, idx) => {
             const primaryUrl = getPrimaryUrl(item);
             const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
+            const pills = [];
+            if (item.version) pills.push(`<span class="meta-pill accent">${escapeHTML(item.version)}</span>`);
+            if (item.size) pills.push(`<span class="meta-pill">${escapeHTML(item.size)}</span>`);
+
+            const descHtml = item.description
+                ? `<p class="card-desc">${escapeHTML(item.description)}</p>`
+                : "";
+
             return `
             <div class="video-card" style="padding: 24px; animation-delay: ${delay}s;" data-external-url="${escapeHTML(primaryUrl)}" tabindex="0" role="link">
-                <h4 class="video-title" style="font-size: 16px; margin-bottom: 20px;">
-                    ${escapeHTML(item.name)}
-                </h4>
+                <div class="card-header-row">
+                    <h4 class="video-title" style="font-size: 16px;">
+                        ${escapeHTML(item.name)}
+                    </h4>
+                    <button type="button" class="copy-link-btn" data-copy-url="${escapeHTML(primaryUrl)}" title="Copy download link" aria-label="Copy download link">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+                ${descHtml}
+                ${pills.length ? `<div class="meta-pills">${pills.join("")}</div>` : ""}
                 ${buildDownloadButtons(item)}
             </div>
             `;
@@ -391,6 +460,39 @@ const CreatorHub = (() => {
     const renderAllSoftwareTabs = () => {
         fetchGitHubRepos();
         ['windows', 'linux', 'android'].forEach(platform => renderSoftwareGrid(platform));
+    };
+
+    const syncLiveGitHubApi = async () => {
+        try {
+            const res = await fetch(`https://api.github.com/users/${encodeURIComponent(config.githubUser)}/repos?sort=updated&per_page=40`, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Accept': 'application/vnd.github+json' }
+            });
+            if (!res.ok) return;
+            const repos = await res.json();
+            if (!Array.isArray(repos) || repos.length === 0) return;
+
+            const mapped = repos
+                .filter(r => r && !r.fork && typeof r.name === "string")
+                .map(r => ({
+                    name: r.name.replace(/[_-]+/g, " "),
+                    url: sanitizeUrl(r.html_url),
+                    description: typeof r.description === "string" ? r.description.slice(0, 220) : "",
+                    language: typeof r.language === "string" ? r.language : "",
+                    stars: Number.isFinite(Number(r.stargazers_count)) ? Number(r.stargazers_count) : 0,
+                    updatedAt: typeof r.updated_at === "string" ? r.updated_at : ""
+                }));
+
+            if (mapped.length > 0) {
+                config.software.github = mapped;
+                saveConfig();
+                fetchGitHubRepos();
+            }
+        } catch (_) {
+            // Keep software.json / cached GitHub repos if rate-limited or offline
+        }
     };
 
     const syncGitHubSoftware = async () => {
@@ -414,7 +516,9 @@ const CreatorHub = (() => {
                     windows: sanitizeSoftwareList(data.windows),
                     linux: sanitizeSoftwareList(data.linux),
                     android: sanitizeSoftwareList(data.android),
-                    github: sanitizeSoftwareList(data.github)
+                    github: config.software.github.length > 0
+                        ? config.software.github
+                        : sanitizeSoftwareList(data.github)
                 };
                 saveConfig();
                 renderAllSoftwareTabs();
@@ -429,6 +533,9 @@ const CreatorHub = (() => {
                 renderAllSoftwareTabs();
             }
         }
+
+        // Enrich GitHub tab with live public repositories
+        syncLiveGitHubApi();
     };
 
     const handleSearch = (tabId = 'youtube') => {
@@ -454,13 +561,26 @@ const CreatorHub = (() => {
         }
     };
 
+    const selectTopic = (topic) => {
+        activeTopic = topic || "all";
+        document.querySelectorAll("[data-topic]").forEach(chip => {
+            chip.classList.toggle("active", chip.getAttribute("data-topic") === activeTopic);
+        });
+        renderVideos();
+    };
+
     const renderVideos = () => {
         const sortModeEl = document.getElementById("sortMode");
         const sortMode = sortModeEl ? sortModeEl.value : 'views';
         const query = (searchQueries.youtube || "").toLowerCase();
 
         const sorted = [...(config.videos || [])]
-            .filter(v => (v.title || "").toLowerCase().includes(query))
+            .filter(v => {
+                const title = (v.title || "").toLowerCase();
+                const matchesQuery = title.includes(query);
+                const matchesTopic = activeTopic === "all" || title.includes(activeTopic);
+                return matchesQuery && matchesTopic;
+            })
             .sort((a, b) => {
                 if (sortMode === "views") return (b.views || 0) - (a.views || 0);
                 return new Date(b.publishedAt) - new Date(a.publishedAt);
@@ -472,7 +592,7 @@ const CreatorHub = (() => {
         if (!gridEl) return;
 
         if (config.videos && config.videos.length > 0 && sorted.length === 0) {
-            gridEl.innerHTML = `<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-secondary);">No results found for "${escapeHTML(searchQueries.youtube)}"</div>`;
+            gridEl.innerHTML = `<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-secondary);">No matching videos found.</div>`;
             return;
         }
 
@@ -619,7 +739,6 @@ const CreatorHub = (() => {
         renderVideos();
     };
 
-    // Interactive Circuit-Constellation + Shooting Data Pulses + Pulse Rings on Black Background
     const initParticles = () => {
         const canvas = document.getElementById("bgParticles");
         if (!canvas) return;
@@ -692,7 +811,6 @@ const CreatorHub = (() => {
         const animate = () => {
             ctx.clearRect(0, 0, width, height);
 
-            // Expanding signal rings
             for (const ring of rings) {
                 ring.r += ring.speed;
                 if (ring.r > ring.maxR) {
@@ -712,7 +830,6 @@ const CreatorHub = (() => {
                 ctx.stroke();
             }
 
-            // Shooting circuit data pulses
             for (const beam of pulses) {
                 if (beam.horizontal) {
                     beam.x += beam.speed;
@@ -808,6 +925,12 @@ const CreatorHub = (() => {
             });
         });
 
+        document.querySelectorAll("[data-topic]").forEach(chip => {
+            chip.addEventListener("click", () => {
+                selectTopic(chip.getAttribute("data-topic"));
+            });
+        });
+
         document.querySelectorAll("[data-search-tab]").forEach(input => {
             const tab = input.getAttribute("data-search-tab");
             input.addEventListener("input", () => handleSearch(tab));
@@ -839,6 +962,14 @@ const CreatorHub = (() => {
         const mainContent = document.getElementById("mainContent");
         if (mainContent) {
             mainContent.addEventListener("click", (e) => {
+                const copyBtn = e.target.closest("[data-copy-url]");
+                if (copyBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    copyLinkToClipboard(copyBtn.getAttribute("data-copy-url"));
+                    return;
+                }
+
                 if (e.target.closest("a.drive-btn")) return;
 
                 const videoCard = e.target.closest("[data-video-id]");
@@ -889,6 +1020,11 @@ const CreatorHub = (() => {
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") closePlayer();
         });
+
+        window.addEventListener("hashchange", () => {
+            const hashTab = window.location.hash.replace(/^#/, "");
+            if (VALID_TABS.has(hashTab)) switchTab(hashTab, false);
+        });
     };
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -896,7 +1032,14 @@ const CreatorHub = (() => {
         initProfile();
         initTypewriter();
         initParticles();
-        animateSectionHeading("youtube");
+
+        const initialTab = window.location.hash.replace(/^#/, "");
+        if (VALID_TABS.has(initialTab)) {
+            switchTab(initialTab, false);
+        } else {
+            animateSectionHeading("youtube");
+        }
+
         syncGitHubSoftware();
         syncYouTubeVideos();
     });
