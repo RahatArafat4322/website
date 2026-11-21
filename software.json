@@ -1,11 +1,11 @@
 {
   "github": [
     {
-      "name": "My Theme",
-      "url": "https://github.com/RahatArafat4322/my-theme",
-      "description": "You can try my theme on your KDE desktop.",
-      "language": "",
-      "credit": "rahat",
+      "name": "Repo 1",
+      "url": "https://github.com/",
+      "description": "Add a short description of this repository and credit the creator here.",
+      "language": "C++",
+      "credit": "Creator Credit",
       "version": "v1.0"
     },
     {

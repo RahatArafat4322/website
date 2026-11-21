@@ -1,0 +1,27 @@
+[
+  {
+    "name": "YouTube",
+    "icon": "youtube.png",
+    "url": "https://youtube.com/@next_circuit"
+  },
+  {
+    "name": "GitHub",
+    "icon": "github.png",
+    "url": "https://github.com/RahatArafat4322"
+  },
+  {
+    "name": "Discord",
+    "icon": "discord.png",
+    "url": ""
+  },
+  {
+    "name": "Facebook",
+    "icon": "facebook.png",
+    "url": ""
+  },
+  {
+    "name": "LinkedIn",
+    "icon": "linkedin.png",
+    "url": ""
+  }
+]

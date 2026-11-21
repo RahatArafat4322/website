@@ -389,7 +389,69 @@ a.nav-btn .social-btn-left {
   flex-direction: column;
   height: 100%;
   text-decoration: none;
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
   transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.software-card {
+  padding: 24px;
+  cursor: default;
+}
+
+.software-card-title {
+  font-size: 16px;
+}
+
+.github-card-title {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 13px;
+  height: 13px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.grid-empty-state {
+  grid-column: 1 / -1;
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.waiting-sync-state {
+  grid-column: 1 / -1;
+  padding: 60px 32px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.waiting-sync-state h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.waiting-sync-state p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.skeleton-title-short {
+  width: 60%;
+}
+
+.sort-select-wrapper {
+  width: 200px;
 }
 
 .video-card:hover {
@@ -475,16 +537,79 @@ a.nav-btn .social-btn-left {
   color: var(--accent-orange);
 }
 
+.card-desc-wrap {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .card-desc {
   font-size: 0.8125rem;
   line-height: 1.5;
   min-height: 3em;
+  width: 100%;
   color: var(--text-secondary);
-  margin-bottom: 14px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.card-desc.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(252, 79, 0, 0.55) rgba(255, 255, 255, 0.04);
+}
+
+.card-desc.expanded::-webkit-scrollbar {
+  display: block;
+  width: 5px;
+}
+
+.card-desc.expanded::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.card-desc.expanded::-webkit-scrollbar-thumb {
+  background: rgba(252, 79, 0, 0.55);
+  border-radius: 999px;
+}
+
+.card-desc.expanded::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-orange);
+}
+
+.desc-toggle-btn {
+  margin-top: 6px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--accent-orange);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.15s ease;
+}
+
+.desc-toggle-btn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.desc-toggle-btn.hidden {
+  display: none;
 }
 
 .meta-pills {

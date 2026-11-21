@@ -94,7 +94,7 @@ const CreatorHub = (() => {
                 name: item.name.slice(0, 120),
                 version: typeof item.version === "string" ? item.version.slice(0, 32) : "",
                 size: typeof item.size === "string" ? item.size.slice(0, 32) : "",
-                description: typeof item.description === "string" ? item.description.slice(0, 220) : "",
+                description: typeof item.description === "string" ? item.description.slice(0, 10000) : "",
                 language: typeof item.language === "string" ? item.language.slice(0, 40) : "",
                 credit: typeof item.credit === "string" ? item.credit.slice(0, 60) : "",
                 stars: Number.isFinite(Number(item.stars)) ? Number(item.stars) : null,
@@ -167,24 +167,6 @@ const CreatorHub = (() => {
         }, 2600);
     };
 
-    const copyLinkToClipboard = async (url) => {
-        const cleanUrl = sanitizeUrl(url);
-        if (!cleanUrl || cleanUrl === "#") {
-            showToast("No download link available yet");
-            return;
-        }
-        try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                await navigator.clipboard.writeText(cleanUrl);
-                showToast("Link copied to clipboard!");
-                return;
-            }
-        } catch (_) {
-            // Fallback below
-        }
-        showToast("Unable to copy link automatically");
-    };
-
     const formatViews = (num) => {
         if (!num && num !== 0) return "YouTube Upload";
         if (num >= 1000000) return (num / 1000000).toFixed(1) + "M views";
@@ -198,26 +180,28 @@ const CreatorHub = (() => {
         badge.textContent = String(count);
     };
 
-    const animateSectionHeading = (tabId) => {
-        const tabEl = document.getElementById(`tab-${tabId}`);
-        if (!tabEl) return;
-        const h1 = tabEl.querySelector("h1.animated-title");
-        if (!h1) return;
-        const rawText = h1.getAttribute("data-text") || h1.textContent.trim();
-        h1.innerHTML = Array.from(rawText).map((ch, idx) => {
-            if (ch === " ") return " ";
-            return `<span class="char-reveal" style="animation-delay: ${(idx * 0.025).toFixed(3)}s;">${escapeHTML(ch)}</span>`;
-        }).join("");
+    const buildDescriptionBlock = (description) => {
+        if (!description) return "";
+        return `
+            <div class="card-desc-wrap">
+                <p class="card-desc">${escapeHTML(description)}</p>
+                <button type="button" class="desc-toggle-btn hidden" aria-expanded="false">Show more</button>
+            </div>
+        `;
     };
 
-    const attachCardSpotlight = (container) => {
-        if (!container || window.matchMedia("(hover: none)").matches) return;
-        const cards = container.querySelectorAll(".video-card");
-        cards.forEach(card => {
-            card.addEventListener("mousemove", (e) => {
-                const rect = card.getBoundingClientRect();
-                card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-                card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+    const initDescriptionToggles = (container) => {
+        if (!container) return;
+        requestAnimationFrame(() => {
+            container.querySelectorAll(".card-desc-wrap").forEach(wrap => {
+                const desc = wrap.querySelector(".card-desc");
+                const btn = wrap.querySelector(".desc-toggle-btn");
+                if (!desc || !btn) return;
+                if (desc.scrollHeight > desc.clientHeight + 2) {
+                    btn.classList.remove("hidden");
+                } else {
+                    btn.classList.add("hidden");
+                }
             });
         });
     };
@@ -239,7 +223,7 @@ const CreatorHub = (() => {
                 const label = escapeHTML(link.label || "Download");
                 return `
                     <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="drive-btn">
-                        <svg style="width:13px; height:13px; margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
                         ${label}
                     </a>
                 `;
@@ -250,17 +234,11 @@ const CreatorHub = (() => {
         return `
             <div class="links-stack">
                 <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="drive-btn">
-                    <svg style="width:13px; height:13px; margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
                     Download
                 </a>
             </div>
         `;
-    };
-
-    const openExternalLink = (url) => {
-        const cleanUrl = sanitizeUrl(url);
-        if (!cleanUrl || cleanUrl === "#") return;
-        window.open(cleanUrl, "_blank", "noopener,noreferrer");
     };
 
     const switchTab = (tabId, updateHash = true) => {
@@ -367,26 +345,23 @@ const CreatorHub = (() => {
         updateCountBadge("github", repos.length);
 
         if (allRepos.length === 0) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No repositories linked yet.</div>`;
+            grid.innerHTML = `<div class="grid-empty-state">No repositories linked yet.</div>`;
             return;
         }
 
         if (repos.length === 0) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No repositories matching "${escapeHTML(searchQueries.github)}"</div>`;
+            grid.innerHTML = `<div class="grid-empty-state">No repositories matching "${escapeHTML(searchQueries.github)}"</div>`;
             return;
         }
 
-        grid.innerHTML = repos.map((repo, idx) => {
+        grid.innerHTML = repos.map((repo) => {
             const href = sanitizeUrl(repo.url || repo.driveUrl);
-            const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
             const pills = [];
             if (repo.version) pills.push(`<span class="meta-pill accent">${escapeHTML(repo.version)}</span>`);
             if (repo.language) pills.push(`<span class="meta-pill">${escapeHTML(repo.language)}</span>`);
             if (Number.isFinite(repo.stars) && repo.stars > 0) pills.push(`<span class="meta-pill">★ ${repo.stars}</span>`);
 
-            const descHtml = repo.description
-                ? `<p class="card-desc">${escapeHTML(repo.description)}</p>`
-                : "";
+            const descHtml = buildDescriptionBlock(repo.description);
 
             const updatedLabel = (repo.credit && repo.credit.trim())
                 ? repo.credit.trim()
@@ -395,9 +370,9 @@ const CreatorHub = (() => {
                     : "Repository");
 
             return `
-            <div class="video-card" style="padding: 24px; cursor: default;">
+            <div class="video-card software-card">
                 <div class="card-header-row">
-                    <h4 class="video-title" style="font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                    <h4 class="video-title github-card-title">
                         <svg class="repo-icon" width="18" height="18" viewBox="0 0 16 16" fill="var(--text-muted)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
                         <span>${escapeHTML(repo.name)}</span>
                     </h4>
@@ -408,7 +383,7 @@ const CreatorHub = (() => {
                     <span class="card-footer-meta">${escapeHTML(updatedLabel)}</span>
                     <div class="links-stack">
                         <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="drive-btn">
-                            <svg style="width:13px; height:13px; margin-right:6px;" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                            <svg class="btn-icon" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
                             GitHub ↗
                         </a>
                     </div>
@@ -416,7 +391,7 @@ const CreatorHub = (() => {
             </div>
             `;
         }).join("");
-
+        initDescriptionToggles(grid);
     };
 
     const renderSoftwareGrid = (platform) => {
@@ -440,30 +415,26 @@ const CreatorHub = (() => {
         updateCountBadge(platform, items.length);
 
         if (allItems.length === 0) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No software linked for this platform yet.</div>`;
+            grid.innerHTML = `<div class="grid-empty-state">No software linked for this platform yet.</div>`;
             return;
         }
 
         if (items.length === 0) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--text-secondary);">No results matching "${escapeHTML(searchQueries[platform])}"</div>`;
+            grid.innerHTML = `<div class="grid-empty-state">No results matching "${escapeHTML(searchQueries[platform])}"</div>`;
             return;
         }
 
-        grid.innerHTML = items.map((item, idx) => {
-            const primaryUrl = getPrimaryUrl(item);
-            const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
+        grid.innerHTML = items.map((item) => {
             const pills = [];
             if (item.version) pills.push(`<span class="meta-pill accent">${escapeHTML(item.version)}</span>`);
 
-            const descHtml = item.description
-                ? `<p class="card-desc">${escapeHTML(item.description)}</p>`
-                : "";
+            const descHtml = buildDescriptionBlock(item.description);
 
             const footerMeta = item.size ? escapeHTML(item.size) : "Ready";
             return `
-            <div class="video-card" style="padding: 24px; cursor: default;">
+            <div class="video-card software-card">
                 <div class="card-header-row">
-                    <h4 class="video-title" style="font-size: 16px;">
+                    <h4 class="video-title software-card-title">
                         ${escapeHTML(item.name)}
                     </h4>
                 </div>
@@ -476,12 +447,62 @@ const CreatorHub = (() => {
             </div>
             `;
         }).join("");
-
+        initDescriptionToggles(grid);
     };
 
     const renderAllSoftwareTabs = () => {
         fetchGitHubRepos();
         ['windows', 'linux', 'android'].forEach(platform => renderSoftwareGrid(platform));
+    };
+
+    const renderSocialLinks = (links) => {
+        const container = document.getElementById("connectLinks");
+        if (!container || !Array.isArray(links) || links.length === 0) return;
+        container.innerHTML = links
+            .filter(item => item && typeof item === "object" && typeof item.name === "string")
+            .map(item => {
+                const name = item.name.trim().slice(0, 40);
+                const icon = sanitizeUrl(item.icon || "");
+                const url = sanitizeUrl(item.url || "");
+                const iconHtml = icon !== "#"
+                    ? `<img src="${escapeHTML(icon)}" alt="${escapeHTML(name)}" class="icon-badge" />`
+                    : "";
+                if (url !== "#") {
+                    return `
+                    <a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer nofollow" class="social-btn nav-btn">
+                        <div class="social-btn-left">
+                            ${iconHtml}
+                            <span class="nav-text">${escapeHTML(name)}</span>
+                        </div>
+                    </a>`;
+                }
+                return `
+                <button type="button" class="social-btn nav-btn" data-coming-soon="${escapeHTML(name)}">
+                    <div class="social-btn-left">
+                        ${iconHtml}
+                        <span class="nav-text">${escapeHTML(name)}</span>
+                    </div>
+                </button>`;
+            }).join("");
+    };
+
+    const loadSocialLinks = async () => {
+        try {
+            const res = await fetch(`social-links.json?t=${Date.now()}`, {
+                method: 'GET',
+                mode: 'same-origin',
+                cache: 'no-store',
+                credentials: 'omit',
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (Array.isArray(data)) {
+                renderSocialLinks(data);
+            }
+        } catch (_) {
+            // Keep HTML fallback links if social-links.json is missing
+        }
     };
 
     const syncGitHubSoftware = async () => {
@@ -577,7 +598,7 @@ const CreatorHub = (() => {
         if (!gridEl) return;
 
         if (config.videos && config.videos.length > 0 && sorted.length === 0) {
-            gridEl.innerHTML = `<div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-secondary);">No matching videos found.</div>`;
+            gridEl.innerHTML = `<div class="grid-empty-state">No matching videos found.</div>`;
             return;
         }
 
@@ -586,24 +607,23 @@ const CreatorHub = (() => {
                 gridEl.innerHTML = `<div class="error-banner">${escapeHTML(youtubeSyncError)}</div>`;
             } else {
                 gridEl.innerHTML = `
-                    <div style="grid-column: 1 / -1; padding: 60px 32px; background: rgba(0,0,0,0.35); border: 1px dashed var(--border-subtle); border-radius: 12px; text-align: center;">
-                        <h3 style="font-size: 16px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;">Waiting for Feed Sync</h3>
-                        <p style="font-size: 13px; color: var(--text-secondary);">Videos will appear here securely once synced.</p>
+                    <div class="waiting-sync-state">
+                        <h3>Waiting for Feed Sync</h3>
+                        <p>Videos will appear here securely once synced.</p>
                     </div>
                 `;
             }
             return;
         }
 
-        gridEl.innerHTML = sorted.map((v, idx) => {
+        gridEl.innerHTML = sorted.map((v) => {
             const dateObj = new Date(v.publishedAt);
             const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Unknown Date';
-            const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
 
             return `
-            <article class="video-card" data-video-id="${escapeHTML(v.id)}" data-video-title="${escapeHTML(v.title)}" style="" tabindex="0" role="button">
+            <article class="video-card" data-video-id="${escapeHTML(v.id)}" data-video-title="${escapeHTML(v.title)}" tabindex="0" role="button">
                 <div class="thumb-container">
-                    <img src="${escapeHTML(sanitizeUrl(v.thumbnail))}" alt="${escapeHTML(v.title)}" loading="lazy" />
+                    <img src="${escapeHTML(sanitizeUrl(v.thumbnail))}" alt="${escapeHTML(v.title)}" loading="lazy" decoding="async" />
                     <div class="play-overlay"><div class="play-circle">▶</div></div>
                 </div>
                 <div class="card-body">
@@ -627,7 +647,7 @@ const CreatorHub = (() => {
                 <div class="skeleton skeleton-thumb"></div>
                 <div class="skeleton-body">
                     <div class="skeleton skeleton-title"></div>
-                    <div class="skeleton skeleton-title" style="width: 60%;"></div>
+                    <div class="skeleton skeleton-title skeleton-title-short"></div>
                     <div class="skeleton skeleton-meta"></div>
                 </div>
             </div>
@@ -672,8 +692,26 @@ const CreatorHub = (() => {
             });
             if (cfgRes.ok) {
                 const cfgData = await cfgRes.json();
-                if (cfgData && typeof cfgData === "object") {
-                    siteConfig = { ...siteConfig, ...cfgData };
+                if (cfgData && typeof cfgData === "object" && !Array.isArray(cfgData)) {
+                    if (typeof cfgData.channelName === "string") siteConfig.channelName = cfgData.channelName.slice(0, 60);
+                    if (typeof cfgData.handle === "string") siteConfig.handle = cfgData.handle.slice(0, 40);
+                    if (typeof cfgData.bio === "string") siteConfig.bio = cfgData.bio.slice(0, 260);
+                    if (Array.isArray(cfgData.typewriterPhrases)) {
+                        siteConfig.typewriterPhrases = cfgData.typewriterPhrases
+                            .filter(p => typeof p === "string" && p.trim())
+                            .map(p => p.slice(0, 80));
+                    }
+                    if (Array.isArray(cfgData.topics)) {
+                        siteConfig.topics = cfgData.topics
+                            .filter(t => t && typeof t === "object" && typeof t.id === "string" && typeof t.label === "string")
+                            .map(t => ({ id: t.id.slice(0, 30), label: t.label.slice(0, 30) }));
+                    }
+                    if (typeof cfgData.channelId === "string" && /^[a-zA-Z0-9_-]{10,40}$/.test(cfgData.channelId)) {
+                        siteConfig.channelId = cfgData.channelId;
+                    }
+                    if (typeof cfgData.apiKey === "string" && /^[a-zA-Z0-9_-]{20,80}$/.test(cfgData.apiKey)) {
+                        siteConfig.apiKey = cfgData.apiKey;
+                    }
                     applySiteConfig();
                 }
             }
@@ -780,7 +818,7 @@ const CreatorHub = (() => {
         const modalEl = document.getElementById("playerModal");
 
         if (titleEl) titleEl.textContent = title || "Now Playing";
-        if (iframeEl) iframeEl.src = `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0`;
+        if (iframeEl) iframeEl.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0`;
         if (modalEl) modalEl.classList.add("active");
     };
 
@@ -821,12 +859,16 @@ const CreatorHub = (() => {
             });
         });
 
-        document.querySelectorAll("[data-coming-soon]").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const name = btn.getAttribute("data-coming-soon");
-                showToast(`${name} link coming soon!`);
+        const connectEl = document.getElementById("connectLinks");
+        if (connectEl) {
+            connectEl.addEventListener("click", (e) => {
+                const btn = e.target.closest("[data-coming-soon]");
+                if (btn) {
+                    const name = btn.getAttribute("data-coming-soon");
+                    showToast(`${name} link coming soon!`);
+                }
             });
-        });
+        }
 
         const filtersEl = document.getElementById("topicFilters");
         if (filtersEl) {
@@ -866,26 +908,20 @@ const CreatorHub = (() => {
 
         const mainContent = document.getElementById("mainContent");
         if (mainContent) {
-            if (!window.matchMedia("(hover: none)").matches) {
-                let spotRaf = 0;
-                mainContent.addEventListener("mousemove", (e) => {
-                    if (spotRaf) return;
-                    spotRaf = requestAnimationFrame(() => {
-                        spotRaf = 0;
-                        const card = e.target.closest(".video-card");
-                        if (!card) return;
-                        const rect = card.getBoundingClientRect();
-                        card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-                        card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-                    });
-                }, { passive: true });
-            }
             mainContent.addEventListener("click", (e) => {
-                const copyBtn = e.target.closest("[data-copy-url]");
-                if (copyBtn) {
+
+                const toggleBtn = e.target.closest(".desc-toggle-btn");
+                if (toggleBtn) {
                     e.preventDefault();
                     e.stopPropagation();
-                    copyLinkToClipboard(copyBtn.getAttribute("data-copy-url"));
+                    const wrap = toggleBtn.closest(".card-desc-wrap");
+                    const desc = wrap ? wrap.querySelector(".card-desc") : null;
+                    if (desc) {
+                        const isExpanded = desc.classList.toggle("expanded");
+                        toggleBtn.textContent = isExpanded ? "Show less" : "Show more";
+                        toggleBtn.setAttribute("aria-expanded", String(isExpanded));
+                        if (!isExpanded) desc.scrollTop = 0;
+                    }
                     return;
                 }
 
@@ -897,10 +933,7 @@ const CreatorHub = (() => {
                     return;
                 }
 
-                const extCard = e.target.closest("[data-external-url]");
-                if (extCard) {
-                    openExternalLink(extCard.getAttribute("data-external-url"));
-                }
+
             });
 
             mainContent.addEventListener("keydown", (e) => {
@@ -911,11 +944,7 @@ const CreatorHub = (() => {
                     openPlayer(videoCard.getAttribute("data-video-id"), videoCard.getAttribute("data-video-title"));
                     return;
                 }
-                const extCard = e.target.closest("[data-external-url]");
-                if (extCard) {
-                    e.preventDefault();
-                    openExternalLink(extCard.getAttribute("data-external-url"));
-                }
+
             });
         }
 
@@ -954,9 +983,26 @@ const CreatorHub = (() => {
         const initialTab = window.location.hash.replace(/^#/, "");
         if (VALID_TABS.has(initialTab)) {
             switchTab(initialTab, false);
-        } else {
         }
 
+        let resizeRaf = 0;
+        window.addEventListener("resize", () => {
+            if (resizeRaf) return;
+            resizeRaf = requestAnimationFrame(() => {
+                resizeRaf = 0;
+                const activeGrid = document.querySelector(".view-section.active .video-grid");
+                if (activeGrid) initDescriptionToggles(activeGrid);
+            });
+        }, { passive: true });
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+                const activeGrid = document.querySelector(".view-section.active .video-grid");
+                if (activeGrid) initDescriptionToggles(activeGrid);
+            });
+        }
+
+        loadSocialLinks();
         syncGitHubSoftware();
         syncYouTubeVideos();
     });
@@ -967,7 +1013,6 @@ const CreatorHub = (() => {
         openPlayer,
         closePlayer,
         toggleSortSelect,
-        selectSort,
-        openExternalLink
+        selectSort
     });
 })();
