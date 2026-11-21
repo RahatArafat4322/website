@@ -645,12 +645,12 @@
   ],
   "linux": [
     {
-      "name": "Linux App 1",
-      "driveUrl": "https://drive.google.com/",
-      "url": "https://drive.google.com/",
+      "name": "My Theme",
+      "driveUrl": "https://github.com/RahatArafat4322/my-theme",
+      "url": "https://github.com/RahatArafat4322/my-theme",
       "description": "Add a short description for this Linux software here.",
       "version": "v1.0",
-      "size": "0 MB"
+      "size": "19 MB"
     },
     {
       "name": "Linux App 2",
