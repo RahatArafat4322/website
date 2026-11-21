@@ -32,7 +32,7 @@ const CreatorHub = (() => {
     let siteConfig = {
         channelName: DEFAULT_CONFIG.channelName,
         handle: "@next_circuit",
-        bio: "Embedded systems, STM32, ESP32, Arduino tutorials & hardware engineering projects.",
+        bio: "Embedded systems, STM32, ESP32, and Arduino builds—plus PCB design and open-source tools.",
         typewriterPhrases: [
             "Embedded Systems & PCB Design",
             "STM32 & ARM Cortex-M Firmware",
@@ -236,10 +236,10 @@ const CreatorHub = (() => {
         if (Array.isArray(item.links) && item.links.length > 0) {
             return `<div class="links-stack">` + item.links.map(link => {
                 const href = sanitizeUrl(link.url || link.driveUrl);
-                const label = escapeHTML(link.label || "Secure Download");
+                const label = escapeHTML(link.label || "Download");
                 return `
                     <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="drive-btn">
-                        <svg style="width:16px; margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                        <svg style="width:13px; height:13px; margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
                         ${label}
                     </a>
                 `;
@@ -250,8 +250,8 @@ const CreatorHub = (() => {
         return `
             <div class="links-stack">
                 <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="drive-btn">
-                    <svg style="width:16px; margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                    Secure Download
+                    <svg style="width:13px; height:13px; margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    Download
                 </a>
             </div>
         `;
@@ -281,7 +281,6 @@ const CreatorHub = (() => {
             history.replaceState(null, "", `#${tabId}`);
         }
 
-        animateSectionHeading(tabId);
 
         if (tabId === 'youtube') renderVideos();
         if (tabId === 'github') fetchGitHubRepos();
@@ -396,7 +395,7 @@ const CreatorHub = (() => {
                     : "Repository");
 
             return `
-            <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="video-card" style="padding: 24px; animation-delay: ${delay}s;">
+            <div class="video-card" style="padding: 24px; cursor: default;">
                 <div class="card-header-row">
                     <h4 class="video-title" style="font-size: 16px; display: flex; align-items: center; gap: 8px;">
                         <svg class="repo-icon" width="18" height="18" viewBox="0 0 16 16" fill="var(--text-muted)"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
@@ -405,15 +404,19 @@ const CreatorHub = (() => {
                 </div>
                 ${descHtml}
                 ${pills.length ? `<div class="meta-pills">${pills.join("")}</div>` : ""}
-                <div class="video-stats" style="margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
-                    <span>${escapeHTML(updatedLabel)}</span>
-                    <span>GitHub ↗</span>
+                <div class="card-footer-row">
+                    <span class="card-footer-meta">${escapeHTML(updatedLabel)}</span>
+                    <div class="links-stack">
+                        <a href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer nofollow" class="drive-btn">
+                            <svg style="width:13px; height:13px; margin-right:6px;" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                            GitHub ↗
+                        </a>
+                    </div>
                 </div>
-            </a>
+            </div>
             `;
         }).join("");
 
-        attachCardSpotlight(grid);
     };
 
     const renderSoftwareGrid = (platform) => {
@@ -451,14 +454,14 @@ const CreatorHub = (() => {
             const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
             const pills = [];
             if (item.version) pills.push(`<span class="meta-pill accent">${escapeHTML(item.version)}</span>`);
-            if (item.size) pills.push(`<span class="meta-pill">${escapeHTML(item.size)}</span>`);
 
             const descHtml = item.description
                 ? `<p class="card-desc">${escapeHTML(item.description)}</p>`
                 : "";
 
+            const footerMeta = item.size ? escapeHTML(item.size) : "Ready";
             return `
-            <div class="video-card" style="padding: 24px; animation-delay: ${delay}s;" data-external-url="${escapeHTML(primaryUrl)}" tabindex="0" role="link">
+            <div class="video-card" style="padding: 24px; cursor: default;">
                 <div class="card-header-row">
                     <h4 class="video-title" style="font-size: 16px;">
                         ${escapeHTML(item.name)}
@@ -466,12 +469,14 @@ const CreatorHub = (() => {
                 </div>
                 ${descHtml}
                 ${pills.length ? `<div class="meta-pills">${pills.join("")}</div>` : ""}
-                ${buildDownloadButtons(item)}
+                <div class="card-footer-row">
+                    <span class="card-footer-meta">${footerMeta}</span>
+                    ${buildDownloadButtons(item)}
+                </div>
             </div>
             `;
         }).join("");
 
-        attachCardSpotlight(grid);
     };
 
     const renderAllSoftwareTabs = () => {
@@ -596,7 +601,7 @@ const CreatorHub = (() => {
             const delay = Math.min(idx * 0.02, 0.35).toFixed(3);
 
             return `
-            <article class="video-card" data-video-id="${escapeHTML(v.id)}" data-video-title="${escapeHTML(v.title)}" style="animation-delay: ${delay}s;" tabindex="0" role="button">
+            <article class="video-card" data-video-id="${escapeHTML(v.id)}" data-video-title="${escapeHTML(v.title)}" style="" tabindex="0" role="button">
                 <div class="thumb-container">
                     <img src="${escapeHTML(sanitizeUrl(v.thumbnail))}" alt="${escapeHTML(v.title)}" loading="lazy" />
                     <div class="play-overlay"><div class="play-circle">▶</div></div>
@@ -612,7 +617,6 @@ const CreatorHub = (() => {
             `;
         }).join("");
 
-        attachCardSpotlight(gridEl);
     };
 
     const renderSkeletons = () => {
@@ -810,178 +814,6 @@ const CreatorHub = (() => {
         renderVideos();
     };
 
-    const initParticles = () => {
-        const canvas = document.getElementById("bgParticles");
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-
-        let width = (canvas.width = window.innerWidth);
-        let height = (canvas.height = window.innerHeight);
-
-        const mouse = { x: -9999, y: -9999, radius: 150 };
-
-        window.addEventListener("mousemove", (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        window.addEventListener("touchmove", (e) => {
-            if (e.touches && e.touches.length > 0) {
-                mouse.x = e.touches[0].clientX;
-                mouse.y = e.touches[0].clientY;
-            }
-        }, { passive: true });
-
-        window.addEventListener("touchend", () => {
-            mouse.x = -9999;
-            mouse.y = -9999;
-        });
-
-        window.addEventListener("mouseleave", () => {
-            mouse.x = -9999;
-            mouse.y = -9999;
-        });
-
-        window.addEventListener("resize", () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        });
-
-        const palette = ["#22d3ee", "#818cf8", "#34d399"];
-        const count = Math.min(64, Math.max(32, Math.floor((width * height) / 21000)));
-
-        const particles = Array.from({ length: count }, (_, i) => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            r: Math.random() * 2 + 1.0,
-            vx: (Math.random() - 0.5) * 0.55,
-            vy: (Math.random() - 0.5) * 0.55,
-            color: palette[i % palette.length],
-            pulse: Math.random() * Math.PI * 2
-        }));
-
-        const pulses = Array.from({ length: 7 }, () => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            len: Math.random() * 90 + 60,
-            speed: Math.random() * 2.6 + 1.8,
-            horizontal: Math.random() > 0.5,
-            alpha: Math.random() * 0.34 + 0.16
-        }));
-
-        const rings = Array.from({ length: 4 }, (_, idx) => ({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            r: idx * 32,
-            maxR: 120 + Math.random() * 65,
-            speed: 0.5 + Math.random() * 0.25,
-            color: palette[idx % palette.length]
-        }));
-
-        const animate = () => {
-            ctx.clearRect(0, 0, width, height);
-
-            for (const ring of rings) {
-                ring.r += ring.speed;
-                if (ring.r > ring.maxR) {
-                    ring.r = 2;
-                    ring.x = Math.random() * width;
-                    ring.y = Math.random() * height;
-                }
-                const alpha = (1 - ring.r / ring.maxR) * 0.22;
-                ctx.beginPath();
-                ctx.arc(ring.x, ring.y, ring.r, 0, Math.PI * 2);
-                ctx.strokeStyle = ring.color === "#22d3ee"
-                    ? `rgba(34, 211, 238, ${alpha.toFixed(3)})`
-                    : ring.color === "#818cf8"
-                        ? `rgba(129, 140, 248, ${alpha.toFixed(3)})`
-                        : `rgba(52, 211, 153, ${alpha.toFixed(3)})`;
-                ctx.lineWidth = 1.1;
-                ctx.stroke();
-            }
-
-            for (const beam of pulses) {
-                if (beam.horizontal) {
-                    beam.x += beam.speed;
-                    if (beam.x > width + beam.len) {
-                        beam.x = -beam.len;
-                        beam.y = Math.random() * height;
-                    }
-                    const grad = ctx.createLinearGradient(beam.x - beam.len, beam.y, beam.x, beam.y);
-                    grad.addColorStop(0, "rgba(34, 211, 238, 0)");
-                    grad.addColorStop(1, `rgba(34, 211, 238, ${beam.alpha})`);
-                    ctx.strokeStyle = grad;
-                    ctx.lineWidth = 1.6;
-                    ctx.beginPath();
-                    ctx.moveTo(beam.x - beam.len, beam.y);
-                    ctx.lineTo(beam.x, beam.y);
-                    ctx.stroke();
-                } else {
-                    beam.y += beam.speed;
-                    if (beam.y > height + beam.len) {
-                        beam.y = -beam.len;
-                        beam.x = Math.random() * width;
-                    }
-                    const grad = ctx.createLinearGradient(beam.x, beam.y - beam.len, beam.x, beam.y);
-                    grad.addColorStop(0, "rgba(129, 140, 248, 0)");
-                    grad.addColorStop(1, `rgba(129, 140, 248, ${beam.alpha})`);
-                    ctx.strokeStyle = grad;
-                    ctx.lineWidth = 1.6;
-                    ctx.beginPath();
-                    ctx.moveTo(beam.x, beam.y - beam.len);
-                    ctx.lineTo(beam.x, beam.y);
-                    ctx.stroke();
-                }
-            }
-
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                p.pulse += 0.03;
-                p.x = (p.x + p.vx + width) % width;
-                p.y = (p.y + p.vy + height) % height;
-
-                const dxMouse = p.x - mouse.x;
-                const dyMouse = p.y - mouse.y;
-                const distMouse = Math.hypot(dxMouse, dyMouse);
-                if (distMouse < mouse.radius && distMouse > 0) {
-                    const force = (mouse.radius - distMouse) / mouse.radius;
-                    p.x += (dxMouse / distMouse) * force * 1.15;
-                    p.y += (dyMouse / distMouse) * force * 1.15;
-
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(mouse.x, mouse.y);
-                    ctx.strokeStyle = `rgba(34, 211, 238, ${(force * 0.4).toFixed(3)})`;
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-
-                const radius = p.r + Math.sin(p.pulse) * 0.4;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, Math.max(0.5, radius), 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (dist < 140) {
-                        const alpha = (1 - dist / 140) * 0.28;
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = `rgba(129, 140, 248, ${alpha.toFixed(3)})`;
-                        ctx.lineWidth = 0.9;
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        };
-        animate();
-    };
-
     const bindEventListeners = () => {
         document.querySelectorAll("[data-tab]").forEach(btn => {
             btn.addEventListener("click", () => {
@@ -1034,6 +866,20 @@ const CreatorHub = (() => {
 
         const mainContent = document.getElementById("mainContent");
         if (mainContent) {
+            if (!window.matchMedia("(hover: none)").matches) {
+                let spotRaf = 0;
+                mainContent.addEventListener("mousemove", (e) => {
+                    if (spotRaf) return;
+                    spotRaf = requestAnimationFrame(() => {
+                        spotRaf = 0;
+                        const card = e.target.closest(".video-card");
+                        if (!card) return;
+                        const rect = card.getBoundingClientRect();
+                        card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+                        card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+                    });
+                }, { passive: true });
+            }
             mainContent.addEventListener("click", (e) => {
                 const copyBtn = e.target.closest("[data-copy-url]");
                 if (copyBtn) {
@@ -1104,13 +950,11 @@ const CreatorHub = (() => {
         bindEventListeners();
         initProfile();
         initTypewriter();
-        initParticles();
 
         const initialTab = window.location.hash.replace(/^#/, "");
         if (VALID_TABS.has(initialTab)) {
             switchTab(initialTab, false);
         } else {
-            animateSectionHeading("youtube");
         }
 
         syncGitHubSoftware();

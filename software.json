@@ -5,7 +5,7 @@
       "url": "https://github.com/",
       "description": "Add a short description of this repository and credit the creator here.",
       "language": "C++",
-      "credit": "Creator Credit",
+      "credit": "rahat",
       "version": "v1.0"
     },
     {
@@ -645,12 +645,12 @@
   ],
   "linux": [
     {
-      "name": "My Theme",
-      "driveUrl": "https://github.com/RahatArafat4322/my-theme",
-      "url": "https://github.com/RahatArafat4322/my-theme",
+      "name": "Linux App 1",
+      "driveUrl": "https://drive.google.com/",
+      "url": "https://drive.google.com/",
       "description": "Add a short description for this Linux software here.",
       "version": "v1.0",
-      "size": "19 MB"
+      "size": "0 MB"
     },
     {
       "name": "Linux App 2",
