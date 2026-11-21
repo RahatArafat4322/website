@@ -561,7 +561,9 @@ a.nav-btn .social-btn-left {
 .card-desc.expanded {
   display: block;
   -webkit-line-clamp: unset;
-  max-height: 180px;
+  height: 3em;
+  min-height: 3em;
+  max-height: 3em;
   overflow-y: auto;
   padding-right: 6px;
   scrollbar-width: thin;
